@@ -10,6 +10,7 @@ import { parseEntry, type Entry, type EntryMeta } from "./entry";
 import type { FieldSchema } from "./fields";
 import { parsePage, sortPagesForNav, type Page, type PageMeta } from "./page";
 import { sortEntries } from "./sort";
+import { relatedEntries, seriesParts, type SeriesPart } from "./relations";
 import { collectTags, entriesWithTag, type TagSummary } from "./tags";
 
 /**
@@ -29,7 +30,7 @@ const CONTENT_DIR = path.join(process.cwd(), "content");
 /** Drafts are visible while writing and disappear from a production build. */
 const includeDrafts = process.env.NODE_ENV === "development";
 
-export type { Entry, EntryMeta, Page, PageMeta, TagSummary };
+export type { Entry, EntryMeta, Page, PageMeta, SeriesPart, TagSummary };
 
 const PAGES_DIR = path.join(CONTENT_DIR, "pages");
 
@@ -110,6 +111,19 @@ export function listTags(): TagSummary[] {
 /** The entries carrying a tag, newest first. */
 export function listEntriesByTag(slug: string): EntryMeta[] {
   return sortEntries(entriesWithTag(listAllEntries(), slug), "date-desc");
+}
+
+/**
+ * The parts of the series this entry belongs to, across every collection — a
+ * trip's posts and its photo essays can share a series.
+ */
+export function listSeriesParts(entry: EntryMeta): SeriesPart[] {
+  return seriesParts(listAllEntries(), entry);
+}
+
+/** Entries sharing tags with this one, best match first. */
+export function listRelatedEntries(entry: EntryMeta, limit = 3): EntryMeta[] {
+  return relatedEntries(listAllEntries(), entry, limit);
 }
 
 /** The slugs the catch-all route should generate a page for. */

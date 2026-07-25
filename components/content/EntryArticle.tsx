@@ -3,12 +3,15 @@ import Link from "next/link";
 import { site } from "@/lib/config";
 import type { EntryMeta } from "@/lib/content/entry";
 import { extractHeadings } from "@/lib/content/headings";
+import { listRelatedEntries, listSeriesParts } from "@/services/content";
 import { tagSlug } from "@/lib/content/tags";
 import { formatDate } from "@/lib/format-date";
 
 import type { EntryLayoutProps } from "../layouts";
 import { Comments } from "./Comments";
 import { FieldList } from "./FieldList";
+import { RelatedEntries } from "./RelatedEntries";
+import { SeriesNav } from "./SeriesNav";
 import { TableOfContents } from "./TableOfContents";
 import { Markdown } from "./Markdown";
 
@@ -86,9 +89,13 @@ export function EntryArticle({
         ) : null}
       </header>
 
+      {entry.series ? <SeriesNav name={entry.series} parts={listSeriesParts(entry)} /> : null}
+
       {collection.toc ? <TableOfContents headings={extractHeadings(entry.body)} /> : null}
 
       <Markdown content={entry.body} className="mt-12" />
+
+      <RelatedEntries entries={listRelatedEntries(entry)} locale={locale} />
 
       {showComments ? <Comments config={comments} /> : null}
 

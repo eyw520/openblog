@@ -16,8 +16,10 @@ export {
   listNavLinks,
   listPageSlugs,
   listPages,
+  listRelatedEntries,
+  listSeriesParts,
   listSlugs,
   listTags,
   routeContext
 } from "@/lib/content/read";
-export type { Entry, EntryMeta, Page, PageMeta, TagSummary } from "@/lib/content/read";
+export type { Entry, EntryMeta, Page, PageMeta, SeriesPart, TagSummary } from "@/lib/content/read";

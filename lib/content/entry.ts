@@ -41,6 +41,13 @@ export interface EntryMeta {
   /** What the cover image shows, for readers who cannot see it. */
   imageAlt: string;
   /**
+   * A sequence this entry belongs to — a trip, a multi-part essay, a set of
+   * papers. Entries sharing a series link to each other automatically.
+   */
+  series?: string;
+  /** Position within the series. Without it, series order falls back to date. */
+  seriesPart?: number;
+  /**
    * The collection's own declared fields, already validated. Empty for a
    * collection that declares none — which is every collection by default.
    */
@@ -115,6 +122,16 @@ export function parseEntry(input: ParseEntryInput): ParseEntryResult {
     );
   }
 
+  const series = readString(data.series);
+  if (data.seriesPart !== undefined && typeof data.seriesPart !== "number") {
+    errors.push(`${file} — "seriesPart" must be a number, for example seriesPart: 2`);
+  }
+  if (data.seriesPart !== undefined && series === undefined) {
+    errors.push(
+      `${file} — "seriesPart" is set but "series" is missing. Name the sequence too: series: Winter in Lisbon`
+    );
+  }
+
   const parsedFields = parseFields(file, input.fields ?? {}, data);
   if (!parsedFields.ok) {
     errors.push(...parsedFields.errors);
@@ -148,6 +165,8 @@ export function parseEntry(input: ParseEntryInput): ParseEntryResult {
       tags: tags ?? [],
       ...(image !== undefined ? { image } : {}),
       imageAlt: imageAlt ?? "",
+      ...(series !== undefined ? { series } : {}),
+      ...(typeof data.seriesPart === "number" ? { seriesPart: data.seriesPart } : {}),
       fields: parsedFields.ok ? parsedFields.fields : {},
       body
     }
