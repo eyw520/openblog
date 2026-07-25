@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { type Snapshot, type SourcePost, loadContract, sourceDir } from "./contract";
+import { mainContent, parseRobots } from "./extract";
 import { findFeedUrl, parseFeed, parseSitemap } from "./feed";
 import { htmlToText } from "./text";
 
@@ -175,23 +176,6 @@ async function fetchPost(url: string): Promise<SourcePost> {
   };
 }
 
-/**
- * The part of a page that is the post.
- *
- * Deliberately simple: `<article>`, then `<main>`, then the whole body. A
- * cleverer extractor would guess more often and be wrong more quietly — and
- * when this guesses badly the fidelity gate fails loudly, which is the outcome
- * we want. Prefer a feed with full content over relying on this.
- */
-export function mainContent(html: string): string {
-  return (
-    /<article\b[^>]*>([\s\S]*?)<\/article>/i.exec(html)?.[1] ??
-    /<main\b[^>]*>([\s\S]*?)<\/main>/i.exec(html)?.[1] ??
-    /<body\b[^>]*>([\s\S]*?)<\/body>/i.exec(html)?.[1] ??
-    html
-  );
-}
-
 interface Robots {
   allows: (path: string) => boolean;
 }
@@ -205,25 +189,6 @@ async function loadRobots(siteUrl: string): Promise<Robots> {
     // No robots.txt means no restrictions stated.
     return { allows: () => true };
   }
-}
-
-/** The Disallow paths that apply to everyone. A `*` group is the only one we read. */
-export function parseRobots(body: string): string[] {
-  const disallowed: string[] = [];
-  let appliesToUs = false;
-
-  for (const raw of body.split("\n")) {
-    const line = raw.split("#")[0]?.trim() ?? "";
-    const [field, ...rest] = line.split(":");
-    const value = rest.join(":").trim();
-
-    if (/^user-agent$/i.test(field ?? "")) {
-      appliesToUs = value === "*";
-    } else if (appliesToUs && /^disallow$/i.test(field ?? "") && value.length > 0) {
-      disallowed.push(value);
-    }
-  }
-  return disallowed;
 }
 
 async function get(url: string): Promise<string> {

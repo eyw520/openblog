@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { basename, join } from "node:path";
 
-import type { GateResult, GateSpecs, Snapshot } from "./contract";
+import type { GateResult, Snapshot } from "./contract";
 import type { EntryLike, Pairing } from "./match";
 import { unpaired } from "./match";
 import { fidelity, markdownToText, missingExcerpt } from "./text";
@@ -130,12 +130,6 @@ export function assetsGate(pairings: Pairing[], publicDir: string): GateResult {
  */
 export function strayEntries(entries: EntryLike[], pairings: Pairing[]): string[] {
   return unpaired(entries, pairings).map((entry) => entry.slug);
-}
-
-export function selectGates(gates: GateSpecs): string[] {
-  return Object.entries(gates)
-    .filter(([, value]) => value !== undefined && value !== false)
-    .map(([name]) => name);
 }
 
 /** Markdown `![](…)`, `<photo src>`, and `<gallery images>` all reference files. */
