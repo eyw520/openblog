@@ -1,4 +1,5 @@
 import type { AnchorHTMLAttributes, ImgHTMLAttributes, ReactNode } from "react";
+import type { PluggableList } from "unified";
 
 import { withBasePath } from "@/lib/paths";
 
@@ -43,6 +44,32 @@ export const contentComponents = {
   // every internal link and image breaks on a GitHub Pages project site.
   a: BlogLink,
   img: BlogImage
+};
+
+/**
+ * EXTRA MARKDOWN SYNTAX. The other half of this extension point.
+ *
+ * Components above add new tags; these add new *notation* — mathematics,
+ * diagrams, abbreviations, anything with a remark or rehype plugin. Adding one
+ * here means never editing components/content/Markdown.tsx, which is framework
+ * machinery rather than yours.
+ *
+ * For mathematics, for example:
+ *
+ *   npm install remark-math rehype-katex
+ *
+ *   import remarkMath from "remark-math";
+ *   import rehypeKatex from "rehype-katex";
+ *   import "katex/dist/katex.min.css";   // in app/layout.tsx
+ *
+ *   export const contentPlugins = { remark: [remarkMath], rehype: [rehypeKatex] };
+ *
+ * Order is: openblog's own plugins first, then yours, so a plugin here sees
+ * fully-parsed Markdown and can rely on raw HTML having been handled.
+ */
+export const contentPlugins: { remark: PluggableList; rehype: PluggableList } = {
+  remark: [],
+  rehype: []
 };
 
 function BlogLink({

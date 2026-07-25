@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 
 import { cn } from "@/lib/utils";
 
-import { contentComponents } from "../registry";
+import { contentComponents, contentPlugins } from "../registry";
 
 /**
  * The one Markdown renderer. Every piece of prose on the site goes through it,
@@ -19,7 +19,8 @@ import { contentComponents } from "../registry";
  * repository and rendered at build time, so there is no reader-submitted input
  * anywhere in the pipeline.
  *
- * To add your own tag, edit components/registry.tsx — not this file.
+ * To add your own tag or extra Markdown syntax, edit components/registry.tsx —
+ * not this file.
  */
 export function Markdown({ content, className }: { content: string; className?: string }): React.ReactElement {
   return (
@@ -28,10 +29,15 @@ export function Markdown({ content, className }: { content: string; className?: 
     // colors are already tokens, and tokens flip with the .dark class on their own.
     <div className={cn("prose", className)}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, ...contentPlugins.remark]}
         // rehypeRaw first: it parses the raw HTML into nodes that highlighting
         // then walks. Reversed, fenced code inside raw HTML goes uncoloured.
-        rehypePlugins={[rehypeRaw, rehypeSlug, [rehypeHighlight, { detect: false, ignoreMissing: true }]]}
+        rehypePlugins={[
+          rehypeRaw,
+          rehypeSlug,
+          [rehypeHighlight, { detect: false, ignoreMissing: true }],
+          ...contentPlugins.rehype
+        ]}
         components={contentComponents}
       >
         {content}
