@@ -30,6 +30,7 @@ export function validateConfig(config: SiteConfig): string[] {
   validateUrl(config.url, field);
   validateCollections(config.collections, field);
   validateHome(config, field);
+  validateComments(config, field);
 
   config.social?.forEach((link, index) => {
     const at = `social[${index}]`;
@@ -65,6 +66,49 @@ export function validateConfig(config: SiteConfig): string[] {
 }
 
 type FieldReporter = (name: string, problem: string) => void;
+
+function validateComments(config: SiteConfig, field: FieldReporter): void {
+  const comments = config.comments;
+  if (!comments) {
+    return;
+  }
+
+  if (comments.provider !== "giscus") {
+    field(
+      "comments.provider",
+      `"${String(comments.provider)}" is not supported. The only value is "giscus".`
+    );
+  }
+
+  // "owner/name" — anything else means a copied URL or a bare repository name,
+  // and giscus would silently render nothing at all.
+  if (!/^[\w.-]+\/[\w.-]+$/.test(comments.repo)) {
+    field(
+      "comments.repo",
+      `"${comments.repo}" must be the repository as owner/name, for example repo: "ada/notes" — ` +
+        "not a full URL."
+    );
+  }
+
+  for (const key of ["repoId", "categoryId", "category"] as const) {
+    if (!isNonEmpty(comments[key])) {
+      field(
+        `comments.${key}`,
+        "is missing. Visit https://giscus.app to read this value off your repository."
+      );
+    }
+  }
+
+  const declared = new Set(config.collections.map((collection) => collection.name));
+  comments.collections?.forEach((name, index) => {
+    if (!declared.has(name)) {
+      field(
+        `comments.collections[${index}]`,
+        `"${name}" is not a collection you declared. Available: ${[...declared].join(", ") || "none"}.`
+      );
+    }
+  });
+}
 
 function validateHome(config: SiteConfig, field: FieldReporter): void {
   const home = config.home;

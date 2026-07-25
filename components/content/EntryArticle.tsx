@@ -5,6 +5,7 @@ import type { Entry, EntryMeta } from "@/lib/content/entry";
 import { tagSlug } from "@/lib/content/tags";
 import { formatDate } from "@/lib/format-date";
 
+import { Comments } from "./Comments";
 import { Markdown } from "./Markdown";
 
 /** One post: its title block, its prose, and the way out to its neighbours. */
@@ -27,6 +28,12 @@ export function EntryArticle({
   previous?: EntryMeta;
   next?: EntryMeta;
 }): React.ReactElement {
+  // Comments are opt-in per collection: a notes stream usually does not want
+  // the same conversation an essay does. Bound to a local so the null check
+  // narrows the value handed to <Comments> below.
+  const comments = site.comments;
+  const showComments = comments !== null && comments.collections.includes(collection.name);
+
   return (
     <article>
       <header className="border-rule max-w-measure border-b pb-8">
@@ -79,6 +86,8 @@ export function EntryArticle({
       </header>
 
       <Markdown content={entry.body} className="mt-12" />
+
+      {showComments ? <Comments config={comments} /> : null}
 
       {previous !== undefined || next !== undefined ? (
         <nav aria-label="More in this collection" className="border-rule max-w-measure mt-20 border-t pt-8">

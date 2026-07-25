@@ -16,6 +16,16 @@ export interface ResolvedDisplay {
   copyright: string;
 }
 
+export interface ResolvedComments {
+  provider: "giscus";
+  repo: string;
+  repoId: string;
+  category: string;
+  categoryId: string;
+  /** Collection names that show comments. */
+  collections: string[];
+}
+
 export interface ResolvedTags {
   route: string;
   label: string;
@@ -47,6 +57,8 @@ export interface ResolvedSite {
   collections: ResolvedCollection[];
   home: ResolvedHome;
   tags: ResolvedTags;
+  /** Null when no comment provider is configured. */
+  comments: ResolvedComments | null;
   social: SocialLink[];
   display: ResolvedDisplay;
   nav: NavLink[];
@@ -85,6 +97,12 @@ export function resolveConfig(config: SiteConfig): ResolvedSite {
       label: config.tags?.label ?? "Tags",
       nav: config.tags?.nav ?? false
     },
+    comments: config.comments
+      ? {
+          ...config.comments,
+          collections: config.comments.collections ?? collections.map((collection) => collection.name)
+        }
+      : null,
     social: config.social ?? [],
     display: {
       readingTime: config.display?.readingTime ?? true,

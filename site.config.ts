@@ -52,6 +52,16 @@ export default defineConfig({
     nav: false // true adds a Tags link to the navigation
   },
 
+  // Reader comments, via GitHub Discussions. Delete this block for none.
+  // Visit https://giscus.app to read the four values off your repository.
+  // comments: {
+  //   provider: "giscus",
+  //   repo: "you/your-repo",
+  //   repoId: "R_...",
+  //   category: "Announcements",
+  //   categoryId: "DIC_..."
+  // },
+
   // Ways to reach you, shown in the footer. Add as many as you like:
   //   { label: "Email", href: "mailto:you@example.com" },
   //   { label: "GitHub", href: "https://github.com/you" }

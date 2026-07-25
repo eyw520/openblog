@@ -1,10 +1,10 @@
 // Relative, not "@/site.config": next.config.ts loads this module outside
 // webpack, where the path alias does not exist.
 import rawConfig from "../../site.config";
-import { type ResolvedCollection, type ResolvedSite, resolveConfig } from "./resolve";
+import { type ResolvedCollection, type ResolvedComments, type ResolvedSite, resolveConfig } from "./resolve";
 import { validateConfig } from "./validate";
 
-export type { ResolvedCollection, ResolvedSite };
+export type { ResolvedCollection, ResolvedComments, ResolvedSite };
 export { defineConfig } from "./define";
 export type { Author, CollectionConfig, NavLink, SiteConfig, SortOrder } from "./define";
 

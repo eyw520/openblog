@@ -58,6 +58,32 @@ export interface TagsConfig {
   nav?: boolean;
 }
 
+/**
+ * Reader comments, powered by GitHub Discussions through giscus.
+ *
+ * Comments are off until this block is present. Getting the four identifiers is
+ * a one-time visit to https://giscus.app, which reads them off your repository
+ * after you enable Discussions and install the giscus app.
+ *
+ * Readers need a GitHub account to comment. That is the trade for a comment
+ * system that costs nothing, stores no data of yours, and cannot go down
+ * separately from GitHub itself.
+ */
+export interface CommentsConfig {
+  /** Only giscus is supported today; named so other providers can be added. */
+  provider: "giscus";
+  /** The repository holding the discussions, as "owner/name". */
+  repo: string;
+  /** The repository's node id, from giscus.app. */
+  repoId: string;
+  /** The discussion category to post into, e.g. "Announcements". */
+  category: string;
+  /** That category's node id, from giscus.app. */
+  categoryId: string;
+  /** Which collections show comments, by `name`. Defaults to all of them. */
+  collections?: string[];
+}
+
 /** A way to reach you, shown in the footer. */
 export interface SocialLink {
   /** The visible text, e.g. "Email", "GitHub", "Mastodon". */
@@ -105,6 +131,8 @@ export interface SiteConfig {
   home?: HomeConfig;
   /** Where tag pages live. Tags work without this; it only moves them. */
   tags?: TagsConfig;
+  /** Reader comments. Omit this and posts have none. */
+  comments?: CommentsConfig;
   /** Ways to reach you, listed in the footer. */
   social?: SocialLink[];
   /** Presentation choices that would otherwise mean editing a component. */

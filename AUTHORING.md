@@ -145,6 +145,24 @@ It is then available in every post as `<bookmark>`. Three rules, all from HTML r
 
 `components/content/Callout.tsx` is a small working example to copy.
 
+## Comments
+
+Comments are off until you turn them on. They run on GitHub Discussions through [giscus](https://giscus.app), which means no account to create, no monthly fee, and no comment database of your own to look after. Readers need a GitHub account to post.
+
+Enable Discussions on your repository, install the giscus app, then visit giscus.app — it reads four values off your repository. Put them in `site.config.ts`:
+
+```ts
+comments: {
+  provider: "giscus",
+  repo: "you/your-repo",
+  repoId: "R_...",
+  category: "Announcements",
+  categoryId: "DIC_..."
+}
+```
+
+Add `collections: ["posts"]` to that block to limit comments to one section. Without the block, no third-party code is loaded at all.
+
 ## Changing how it looks
 
 Every color on the site is defined once, at the top of `app/globals.css`, for both the light and dark themes. Change a value there and it changes everywhere — nothing else names a color, and `make check` fails if any code tries to.
