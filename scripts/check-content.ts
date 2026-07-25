@@ -1,9 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { site } from "../lib/config";
-import { listEntries, listPages } from "../lib/content/read";
-
 /**
  * The content gate.
  *
@@ -46,9 +43,16 @@ const VOID_ELEMENTS = new Set([
   "wbr"
 ]);
 
-function main(): void {
-  // Importing `site` has already validated site.config.ts, and listEntries
-  // validates every post's frontmatter. Both throw with their own guidance.
+async function main(): Promise<void> {
+  // Imported here rather than at the top of the file on purpose: loading
+  // lib/config is what validates site.config.ts, and it throws on a bad one.
+  // A static import would run that before the error handler below exists, and
+  // the reader would get a Node stack trace instead of the guidance.
+  const { site } = await import("../lib/config");
+  const { listEntries, listPages } = await import("../lib/content/read");
+
+  // That import has now validated site.config.ts, and listEntries validates
+  // every post's frontmatter. Both throw with their own guidance.
   const knownPaths = new Set<string>(["/"]);
   let entryCount = 0;
 
@@ -197,9 +201,7 @@ function markdownFiles(dir: string): string[] {
 // The config loader and the content reader throw with guidance already written
 // for a human. Printing the message alone keeps that guidance readable — a
 // Node stack trace above it would bury the one line that says what to fix.
-try {
-  main();
-} catch (error) {
+main().catch((error: unknown) => {
   console.error(`\n${error instanceof Error ? error.message : String(error)}\n`);
   process.exit(1);
-}
+});
