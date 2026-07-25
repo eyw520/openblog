@@ -41,6 +41,10 @@ if ! git remote get-url origin >/dev/null 2>&1; then
   exit 1
 fi
 
+# Before anything else: is the configured address the one this repository will
+# actually be published at? Getting that wrong is invisible until it is live.
+npm run --silent deploy:check
+
 echo "Checking everything before publishing..."
 make check
 
