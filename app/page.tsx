@@ -1,11 +1,13 @@
+import { PageLayout } from "@/components/layout";
+import { site } from "@/lib/config";
+
 export default function HomePage(): React.ReactElement {
   return (
-    <main className="mx-auto max-w-measure px-6 py-24">
-      <p className="font-display text-ink-muted text-xs uppercase tracking-label">Installed</p>
-      <h1 className="font-display mt-4 text-5xl font-semibold tracking-tight">openblog</h1>
-      <p className="mt-6 text-lg leading-relaxed text-ink-muted">
-        The shell renders. Content, routes, and the site configuration arrive in the commits that follow.
-      </p>
-    </main>
+    <PageLayout>
+      <h1 className="font-display max-w-measure text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+        {site.title}
+      </h1>
+      <p className="text-ink-muted max-w-measure mt-6 text-lg leading-relaxed">{site.description}</p>
+    </PageLayout>
   );
 }

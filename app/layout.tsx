@@ -1,18 +1,41 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { ThemeProvider } from "@/components/layout";
+import { site } from "@/lib/config";
+
 import { bodyFont, displayFont } from "./fonts";
 import "./globals.css";
 
+// Every field here comes from site.config.ts, so a blog owner never edits this
+// file to change how their site appears in a search result or a shared link.
 export const metadata: Metadata = {
-  title: "openblog",
-  description: "A Markdown-first blog framework that deploys itself to GitHub Pages."
+  metadataBase: new URL(site.url),
+  title: {
+    default: site.title,
+    template: `%s — ${site.title}`
+  },
+  description: site.description,
+  authors: [{ name: site.author.name, ...(site.author.url ? { url: site.author.url } : {}) }],
+  openGraph: {
+    type: "website",
+    siteName: site.title,
+    title: site.title,
+    description: site.description,
+    url: site.url
+  },
+  twitter: { card: "summary", title: site.title, description: site.description },
+  alternates: {
+    types: { "application/rss+xml": `${site.url}/feed.xml` }
+  }
 };
 
 export default function RootLayout({ children }: { children: ReactNode }): React.ReactElement {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${displayFont.variable} ${bodyFont.variable} min-h-screen`}>{children}</body>
+    <html lang={site.locale} suppressHydrationWarning>
+      <body className={`${displayFont.variable} ${bodyFont.variable} min-h-screen`}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
