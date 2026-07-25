@@ -10,6 +10,10 @@
   "scripts": {
     "dev": "next dev",
     "content:check": "tsx scripts/check-content.ts",
+    "import:init": "tsx tools/importloop/init.ts",
+    "import:snapshot": "tsx tools/importloop/snapshot.ts",
+    "import:verify": "tsx tools/importloop/verify.ts",
+    "import:spec": "tsx tools/importloop/spec.ts",
     "prebuild": "npm run content:check",
     "build": "NEXT_BUILD_MODE=1 next build",
     "postbuild": "tsx scripts/finalize-export.ts",
@@ -51,6 +55,7 @@
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react-hooks": "^5.1.0",
+    "fast-xml-parser": "^5.10.1",
     "globals": "^17.7.0",
     "postcss": "^8.4.49",
     "prettier": "^3.4.2",

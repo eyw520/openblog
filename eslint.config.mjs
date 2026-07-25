@@ -57,9 +57,10 @@ export default tseslint.config(
   },
 
   {
-    // Build and validation scripts run in Node and report to the terminal —
-    // their stdout is their interface, so console is the point, not a slip.
-    files: ["scripts/**"],
+    // Build and validation scripts, and the dev-only harnesses in tools/, run in
+    // Node and report to the terminal — their stdout is their interface, so
+    // console is the point, not a slip.
+    files: ["scripts/**", "tools/**"],
     languageOptions: { globals: globals.node },
     rules: { "no-console": "off" }
   },

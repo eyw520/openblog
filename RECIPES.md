@@ -177,6 +177,20 @@ Copy the collection that fits, then create the matching folder under `content/`.
 { name: "posts", label: "Writing", route: "/writing" }
 ```
 
+## Moving an existing blog in
+
+Given a URL, port it with `tools/importloop/` — snapshot the source once, then write Markdown against gates that check nothing was lost:
+
+```bash
+npm run import:init     -- oldblog https://old.example.com
+npm run import:snapshot -- oldblog
+npm run import:verify   -- oldblog
+```
+
+`import:verify` runs offline against the committed snapshot and exits non-zero while work remains, so it drives an autonomous loop directly. `npm run --silent import:spec -- oldblog > SPEC.md` writes the specification whose ACCEPT lines are exactly those gates.
+
+Do not paraphrase while importing. The fidelity gate measures how much of the author's wording survived, and a rewritten sentence is a lost one. See `tools/importloop/README.md`.
+
 ## Not supported
 
 Say so plainly rather than building one of these unasked:

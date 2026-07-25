@@ -45,11 +45,13 @@ Node 20 (`.nvmrc`).
 | `lib/paths.ts` | Applies the base path to raw hrefs Markdown produces. |
 | `services/content/` | `server-only` re-export of the reader, for pages to import. |
 | `scripts/` | The content checker, the export finalizer, the test runner, deploy. |
+| `tools/importloop/` | Dev-only harness for porting an existing blog in, verifiably. Never shipped; nothing in `app/` may import it. |
 
 ## Invariants (do not violate)
 
 - **Never add a route file for a collection.** Collections are declared in `site.config.ts` and served by `app/[...slug]/page.tsx`. A new route file means the config abstraction has been abandoned; fix the resolver in `lib/routes.ts` instead.
 - **Never write a color literal in `app/` or `components/`.** Every color is a token in `app/globals.css`, so one file restyles the site. ESLint fails the build on hex and `rgb()`/`hsl()` literals — the rule exists because a literal silently breaks every user's theme override.
+- **A harness verifies; it never does the work.** `tools/importloop/` decides whether an import is faithful and never writes content — the same division designloop draws. A harness that produced the thing it grades cannot grade it.
 - **Three registries, no fourth mechanism.** Tags and Markdown plugins in `components/registry.tsx`; entry and archive layouts in `components/layouts.tsx`. A capability that does not fit one of those is probably a config option instead.
 - **Every new capability is an option, not a code path.** Add it to `site.config.ts` with a validated default, then record it in RECIPES.md. An option nobody can discover is an option that does not exist.
 - **`site.config.ts` is the only source of site identity.** `basePath`, canonical URLs, the feed, the sitemap, and the nav are all derived from its `url` and `collections`. Do not hardcode any of them.
