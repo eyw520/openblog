@@ -76,6 +76,7 @@ If a request is not here, say so rather than improvising something that looks li
 | "People want to print my recipes" | Already handled; a print stylesheet drops the chrome and writes out link URLs. |
 | "Publish the site" | `make deploy`. First time only: Settings → Pages → Source → GitHub Actions. |
 | "Use my own domain" | Set `url` to `https://yourdomain.com`. The `CNAME` file is written automatically. |
+| "Change the site icon" | Replace `public/favicon.svg`. Nothing else to edit. |
 | "It deployed with no styling" | `url` is wrong. It must be the full published address, including the repository subdirectory on GitHub Pages. |
 
 ## Make it another kind of blog
@@ -180,8 +181,7 @@ Copy the collection that fits, then create the matching folder under `content/`.
 
 Say so plainly rather than building one of these unasked:
 
-- **Math.** No KaTeX or MathJax; `$…$` renders literally.
-- **Structured data (JSON-LD).** Recipe and article rich results are not emitted.
+- **Math, out of the box.** It is three lines away: `npm install remark-math rehype-katex`, add them to `contentPlugins` in `components/registry.tsx`, and import `katex/dist/katex.min.css` in `app/layout.tsx`.
 - **Search.** No built-in search. Pagefind over the exported `out/` is the natural fit if it is genuinely wanted.
 - **Pagination.** Archives list every entry.
 - **Scheduled publishing.** A post dated in the future publishes immediately; use `draft: true` and remove it on the day.
@@ -195,4 +195,4 @@ Say so plainly rather than building one of these unasked:
 2. **Never write a color literal** in `app/` or `components/`. Tokens only.
 3. **Never reformat `content/`.** It belongs to the writer; Prettier is configured to leave it alone.
 4. **Never let a bad post through quietly.** Validation failures stop the build on purpose.
-5. **Run `make check` before saying anything is done.**
+5. **Run `make check` before saying anything is done.** It also prints the blog's shape — collections, layouts, fields, pages, tags — which is the quickest way to see that what you built is what you meant.

@@ -77,19 +77,25 @@ export function EntryArticle({
         <FieldList schema={collection.fields} fields={entry.fields} locale={locale} />
 
         {entry.tags.length > 0 ? (
-          <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2">
-            {entry.tags.map((tag) => (
-              <li key={tag}>
-                <Link
-                  href={`${site.tags.route}/${tagSlug(tag)}`}
-                  className="font-display text-ink-muted hover:text-accent text-xs uppercase tracking-label transition-colors"
-                >
-                  {tag}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-2">
+            {/* Labelled like the fields above it: without this, a lone tag reads
+                as another field label with its value missing. */}
+            <h2 className="font-display text-ink-muted text-xs uppercase tracking-label">Tags</h2>
+            <ul className="flex flex-wrap gap-x-4 gap-y-1">
+              {entry.tags.map((tag) => (
+                <li key={tag}>
+                  <Link
+                    href={`${site.tags.route}/${tagSlug(tag)}`}
+                    className="hover:text-accent transition-colors"
+                  >
+                    {tag}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : null}
+
       </header>
 
       {entry.series ? <SeriesNav name={entry.series} parts={listSeriesParts(entry)} /> : null}

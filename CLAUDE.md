@@ -34,12 +34,14 @@ Node 20 (`.nvmrc`).
 | `content/` | Authored Markdown, one folder per collection. Never reformat it. |
 | `app/` | Routes, root layout, `globals.css` theme tokens, fonts. |
 | `app/[...slug]/` | The single catch-all serving every collection index, entry, page, and tag. |
-| `components/registry.tsx` | Extension point one: custom Markdown tags. |
-| `components/layouts.tsx` | Extension point two: how a collection's entries render. |
+| `components/registry.tsx` | Extension point one: custom Markdown tags, and extra Markdown syntax via `contentPlugins`. |
+| `components/layouts.tsx` | Extension point two: how a collection's entries and its archive render. |
+| `public/` | Static files served from the site root. `favicon.svg` lives here. |
 | `components/layout/`, `components/content/` | Chrome, and the content renderers. |
 | `lib/config/` | Config types, validation, and resolution. Pure. |
 | `lib/content/` | Frontmatter parsing, per-collection field schemas, sorting, the reader. |
 | `lib/routes.ts` | Maps URL segments to a collection index, entry, page, or tag. Pure. |
+| `lib/structured-data.ts` | schema.org JSON-LD for an entry. Pure. |
 | `lib/paths.ts` | Applies the base path to raw hrefs Markdown produces. |
 | `services/content/` | `server-only` re-export of the reader, for pages to import. |
 | `scripts/` | The content checker, the export finalizer, the test runner, deploy. |
@@ -48,6 +50,7 @@ Node 20 (`.nvmrc`).
 
 - **Never add a route file for a collection.** Collections are declared in `site.config.ts` and served by `app/[...slug]/page.tsx`. A new route file means the config abstraction has been abandoned; fix the resolver in `lib/routes.ts` instead.
 - **Never write a color literal in `app/` or `components/`.** Every color is a token in `app/globals.css`, so one file restyles the site. ESLint fails the build on hex and `rgb()`/`hsl()` literals — the rule exists because a literal silently breaks every user's theme override.
+- **Three registries, no fourth mechanism.** Tags and Markdown plugins in `components/registry.tsx`; entry and archive layouts in `components/layouts.tsx`. A capability that does not fit one of those is probably a config option instead.
 - **Every new capability is an option, not a code path.** Add it to `site.config.ts` with a validated default, then record it in RECIPES.md. An option nobody can discover is an option that does not exist.
 - **`site.config.ts` is the only source of site identity.** `basePath`, canonical URLs, the feed, the sitemap, and the nav are all derived from its `url` and `collections`. Do not hardcode any of them.
 - **Validation rules live in `lib/`, never in a script.** `scripts/check-content.ts` imports the real config loader and the real reader, so the gate cannot drift from the build. A checker that reimplements a rule is a checker that eventually disagrees with it.
@@ -72,4 +75,6 @@ Node 20 (`.nvmrc`).
 - **Custom tags in Markdown cannot self-close.** `<photo ... />` stays open and swallows the rest of the post, because HTML only permits that for void elements. `scripts/check-content.ts` fails the gate on it.
 - **Raw hrefs need `withBasePath`.** Next prefixes `<Link>` and its own assets, but not the plain `<a>`/`<img>` Markdown produces, so `components/registry.tsx` overrides both.
 - `content/pages/home.md` is reserved for the front page and is deliberately not published at `/home`.
+- **A layout name lives in two files**: the component in `components/layouts.tsx` and the name in `ENTRY_LAYOUTS`/`INDEX_LAYOUTS` in `lib/config/define.ts`. The duplication is deliberate — it is what lets the gate catch a typo instead of rendering the wrong page.
+- **Heading anchors come from `github-slugger` on both sides** — `lib/content/headings.ts` for the contents list, `rehype-slug` for the ids. Never hand-roll a second slug function; the two must agree exactly.
 - Config errors throw while `lib/config` is being imported. Scripts must import it *inside* their error handler, or the reader gets a stack trace instead of the guidance.

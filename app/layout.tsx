@@ -16,6 +16,10 @@ export const metadata: Metadata = {
     template: `%s — ${site.title}`
   },
   description: site.description,
+  // Written by hand rather than relying on a conventional file, so the icon
+  // resolves correctly under a GitHub Pages subdirectory. Replace
+  // public/favicon.svg to change it.
+  icons: { icon: `${site.basePath}/favicon.svg` },
   authors: [{ name: site.author.name, ...(site.author.url ? { url: site.author.url } : {}) }],
   openGraph: {
     type: "website",
