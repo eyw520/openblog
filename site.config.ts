@@ -44,6 +44,14 @@ export default defineConfig({
     // collections: ["posts"]  // defaults to every collection
   },
 
+  // Tag pages appear on their own once a post has `tags:` in its frontmatter.
+  // These only move them; there is nothing to switch on.
+  tags: {
+    route: "/tags",
+    label: "Tags",
+    nav: false // true adds a Tags link to the navigation
+  },
+
   // Ways to reach you, shown in the footer. Add as many as you like:
   //   { label: "Email", href: "mailto:you@example.com" },
   //   { label: "GitHub", href: "https://github.com/you" }

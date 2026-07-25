@@ -27,6 +27,8 @@ export interface EntryMeta {
   draft: boolean;
   /** Estimated reading time in whole minutes, never less than one. */
   readingMinutes: number;
+  /** Tags as the writer typed them; addressed by their slug. Empty when none. */
+  tags: string[];
 }
 
 /** An entry's metadata plus its Markdown body. */
@@ -80,6 +82,13 @@ export function parseEntry(input: ParseEntryInput): ParseEntryResult {
     errors.push(`${file} — "draft" must be true or false, written without quotes.`);
   }
 
+  const tags = readTags(data.tags);
+  if (tags === null) {
+    errors.push(
+      `${file} — "tags" must be a list of words. Write it as: tags: [maps, travel]`
+    );
+  }
+
   if (errors.length > 0) {
     return { ok: false, errors };
   }
@@ -98,6 +107,7 @@ export function parseEntry(input: ParseEntryInput): ParseEntryResult {
       ...(readString(data.author) !== undefined ? { author: readString(data.author) } : {}),
       draft: data.draft === true,
       readingMinutes: readingMinutes(body),
+      tags: tags ?? [],
       body
     }
   };
@@ -111,6 +121,27 @@ export function readingMinutes(body: string): number {
     .split(/\s+/)
     .filter((word) => word.length > 0).length;
   return Math.max(1, Math.ceil(words / WORDS_PER_MINUTE));
+}
+
+/**
+ * Frontmatter tags, or null when the value is not a list of words. Absent tags
+ * are an empty list, not an error — most posts have none.
+ */
+function readTags(value: unknown): string[] | null {
+  if (value === undefined) {
+    return [];
+  }
+  if (!Array.isArray(value)) {
+    return null;
+  }
+  const tags: string[] = [];
+  for (const item of value) {
+    if (typeof item !== "string" || item.trim().length === 0) {
+      return null;
+    }
+    tags.push(item.trim());
+  }
+  return tags;
 }
 
 function readString(value: unknown): string | undefined {

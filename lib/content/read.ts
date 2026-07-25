@@ -4,10 +4,12 @@ import path from "node:path";
 import matter from "gray-matter";
 
 import { findCollection, site } from "@/lib/config";
+import type { RouteContext } from "@/lib/routes";
 
 import { parseEntry, type Entry, type EntryMeta } from "./entry";
 import { parsePage, sortPagesForNav, type Page, type PageMeta } from "./page";
 import { sortEntries } from "./sort";
+import { collectTags, entriesWithTag, type TagSummary } from "./tags";
 
 /**
  * Reading content/ from disk at build time. This module is deliberately thin:
@@ -26,7 +28,7 @@ const CONTENT_DIR = path.join(process.cwd(), "content");
 /** Drafts are visible while writing and disappear from a production build. */
 const includeDrafts = process.env.NODE_ENV === "development";
 
-export type { Entry, EntryMeta, Page, PageMeta };
+export type { Entry, EntryMeta, Page, PageMeta, TagSummary };
 
 const PAGES_DIR = path.join(CONTENT_DIR, "pages");
 
@@ -94,6 +96,21 @@ export function listLatestEntries(): EntryMeta[] {
   return sortEntries(entries, "date-desc").slice(0, site.home.latest);
 }
 
+/**
+ * Every tag in use across every collection, most used first.
+ *
+ * Tags need no configuration: this returns nothing until a post carries one,
+ * and the tag pages appear the moment it does.
+ */
+export function listTags(): TagSummary[] {
+  return collectTags(listAllEntries());
+}
+
+/** The entries carrying a tag, newest first. */
+export function listEntriesByTag(slug: string): EntryMeta[] {
+  return sortEntries(entriesWithTag(listAllEntries(), slug), "date-desc");
+}
+
 /** The slugs the catch-all route should generate a page for. */
 export function listPageSlugs(): string[] {
   return listPages().map((page) => page.slug);
@@ -111,10 +128,11 @@ export function listNavLinks(): { label: string; href: string }[] {
   if (site.navExplicit) {
     return site.nav;
   }
-  return [...site.nav, ...listPages().filter((page) => page.nav).map((page) => ({
-    label: page.navLabel,
-    href: page.href
-  }))];
+  const pageLinks = listPages()
+    .filter((page) => page.nav)
+    .map((page) => ({ label: page.navLabel, href: page.href }));
+  const tagLink = site.tags.nav && listTags().length > 0 ? [{ label: site.tags.label, href: site.tags.route }] : [];
+  return [...site.nav, ...pageLinks, ...tagLink];
 }
 
 type ReadPageResult = { ok: true; page: Page | null } | { ok: false; errors: string[] };
@@ -225,4 +243,17 @@ function markdownSlugs(dir: string): string[] {
     .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
     .map((entry) => entry.name.replace(/\.md$/, ""))
     .sort();
+}
+
+/**
+ * What the catch-all route needs to resolve any URL. Tags are null until at
+ * least one entry carries one, so an untagged blog has no tag pages at all.
+ */
+export function routeContext(): RouteContext {
+  const tags = listTags();
+  return {
+    collections: site.collections,
+    pageSlugs: listPageSlugs(),
+    tags: tags.length > 0 ? { route: site.tags.route, slugs: tags.map((tag) => tag.slug) } : null
+  };
 }

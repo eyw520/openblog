@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { CollectionIndex, EntryArticle, PageArticle } from "@/components/content";
+import { CollectionIndex, EntryArticle, PageArticle, TagIndex, TagPage } from "@/components/content";
 import { PageLayout } from "@/components/layout";
 import { site } from "@/lib/config";
-import { entrySegments, indexSegments, resolveRoute } from "@/lib/routes";
-import { getEntry, getPage, listEntries, listPageSlugs, listPages } from "@/services/content";
+import { entrySegments, indexSegments, pathSegments, resolveRoute } from "@/lib/routes";
+import {
+  getEntry,
+  getPage,
+  listEntries,
+  listEntriesByTag,
+  listPages,
+  listTags,
+  routeContext
+} from "@/services/content";
 
 /**
- * EVERY content page on the site — collection archives, posts, and standalone
- * pages — is rendered here. This is the file that makes "declare a collection
- * in site.config.ts" or "drop a file in content/pages/" sufficient to publish:
- * there is no per-collection or per-page route to write, and adding one would
- * be the wrong fix for almost any problem.
+ * EVERY content page on the site — collection archives, posts, standalone
+ * pages, and tag pages — is rendered here. This is the file that makes
+ * "declare a collection in site.config.ts", "drop a file in content/pages/",
+ * and "add tags to a post" each sufficient to publish: there is no per-section
+ * route to write, and adding one would be the wrong fix for almost any problem.
  *
  * `lib/routes` decides what a path means; this file only fetches and renders.
  */
@@ -21,63 +29,99 @@ type RouteParams = { slug: string[] };
 
 /** The complete list of pages to export. Anything absent here is not built. */
 export function generateStaticParams(): RouteParams[] {
+  const tags = listTags();
+
   return [
     ...site.collections.flatMap((collection) => [
       { slug: indexSegments(collection) },
       ...listEntries(collection.name).map((entry) => ({ slug: entrySegments(collection, entry.slug) }))
     ]),
-    ...listPages().map((page) => ({ slug: [page.slug] }))
+    ...listPages().map((page) => ({ slug: [page.slug] })),
+    // No tags means no tag index either — an empty page nobody can reach.
+    ...(tags.length > 0
+      ? [
+          { slug: pathSegments(site.tags.route) },
+          ...tags.map((tag) => ({ slug: [...pathSegments(site.tags.route), tag.slug] }))
+        ]
+      : [])
   ];
 }
 
 export async function generateMetadata({ params }: { params: Promise<RouteParams> }): Promise<Metadata> {
   const { slug } = await params;
-  const target = resolveRoute(site.collections, listPageSlugs(), slug);
+  const target = resolveRoute(routeContext(), slug);
   if (!target) {
     return {};
   }
 
-  if (target.kind === "index") {
-    return {
-      title: target.collection.label,
-      description: target.collection.description || site.description
-    };
-  }
+  switch (target.kind) {
+    case "index":
+      return {
+        title: target.collection.label,
+        description: target.collection.description || site.description
+      };
 
-  if (target.kind === "page") {
-    const page = getPage(target.slug);
-    return page ? { title: page.title, description: page.description || site.description } : {};
-  }
-
-  const entry = getEntry(target.collection.name, target.slug);
-  if (!entry) {
-    return {};
-  }
-
-  const description = entry.description || site.description;
-  return {
-    title: entry.title,
-    description,
-    openGraph: {
-      type: "article",
-      title: entry.title,
-      description,
-      publishedTime: entry.date,
-      url: `${site.url}${entry.href}`
+    case "page": {
+      const page = getPage(target.slug);
+      return page ? { title: page.title, description: page.description || site.description } : {};
     }
-  };
+
+    case "tagIndex":
+      return { title: site.tags.label, description: `Everything on this blog, by tag.` };
+
+    case "tag": {
+      const label = listTags().find((tag) => tag.slug === target.slug)?.label ?? target.slug;
+      return { title: label, description: `Posts tagged ${label}.` };
+    }
+
+    case "entry": {
+      const entry = getEntry(target.collection.name, target.slug);
+      if (!entry) {
+        return {};
+      }
+      const description = entry.description || site.description;
+      return {
+        title: entry.title,
+        description,
+        openGraph: {
+          type: "article",
+          title: entry.title,
+          description,
+          publishedTime: entry.date,
+          url: `${site.url}${entry.href}`
+        }
+      };
+    }
+  }
 }
 
-export default async function CollectionPage({
+export default async function ContentPage({
   params
 }: {
   params: Promise<RouteParams>;
 }): Promise<React.ReactElement> {
   const { slug } = await params;
-  const target = resolveRoute(site.collections, listPageSlugs(), slug);
+  const target = resolveRoute(routeContext(), slug);
 
   if (!target) {
     notFound();
+  }
+
+  if (target.kind === "tagIndex") {
+    return (
+      <PageLayout>
+        <TagIndex tags={listTags()} />
+      </PageLayout>
+    );
+  }
+
+  if (target.kind === "tag") {
+    const label = listTags().find((tag) => tag.slug === target.slug)?.label ?? target.slug;
+    return (
+      <PageLayout>
+        <TagPage label={label} entries={listEntriesByTag(target.slug)} locale={site.locale} />
+      </PageLayout>
+    );
   }
 
   if (target.kind === "page") {

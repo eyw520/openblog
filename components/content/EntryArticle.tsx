@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { site, type ResolvedCollection } from "@/lib/config";
 import type { Entry, EntryMeta } from "@/lib/content/entry";
+import { tagSlug } from "@/lib/content/tags";
 import { formatDate } from "@/lib/format-date";
 
 import { Markdown } from "./Markdown";
@@ -60,6 +61,21 @@ export function EntryArticle({
           ) : null}
           {entry.draft ? <span className="text-rubric">· Draft</span> : null}
         </p>
+
+        {entry.tags.length > 0 ? (
+          <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2">
+            {entry.tags.map((tag) => (
+              <li key={tag}>
+                <Link
+                  href={`${site.tags.route}/${tagSlug(tag)}`}
+                  className="font-display text-ink-muted hover:text-accent text-xs uppercase tracking-label transition-colors"
+                >
+                  {tag}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </header>
 
       <Markdown content={entry.body} className="mt-12" />

@@ -45,6 +45,19 @@ export interface CollectionConfig {
   feed?: boolean;
 }
 
+/**
+ * Tag browsing. Tags themselves need no configuration — add `tags:` to a post's
+ * frontmatter and the tag pages appear. This only adjusts where they live.
+ */
+export interface TagsConfig {
+  /** Base route for tag pages. Defaults to "/tags". */
+  route?: string;
+  /** The heading on the tag index. Defaults to "Tags". */
+  label?: string;
+  /** Show a link to the tag index in the navigation. Defaults to false. */
+  nav?: boolean;
+}
+
 /** A way to reach you, shown in the footer. */
 export interface SocialLink {
   /** The visible text, e.g. "Email", "GitHub", "Mastodon". */
@@ -90,6 +103,8 @@ export interface SiteConfig {
   collections: CollectionConfig[];
   /** Front-page options. Its prose lives in content/pages/home.md. */
   home?: HomeConfig;
+  /** Where tag pages live. Tags work without this; it only moves them. */
+  tags?: TagsConfig;
   /** Ways to reach you, listed in the footer. */
   social?: SocialLink[];
   /** Presentation choices that would otherwise mean editing a component. */

@@ -2,6 +2,7 @@
 title: Hello world
 date: 2026-07-01
 description: The first post, and how to replace it with one of your own.
+tags: [writing]
 ---
 
 This file is a post. It lives at `content/posts/hello-world.md`, and everything above the second `---` is its frontmatter — the handful of facts the blog needs in order to list it, date it, and describe it.

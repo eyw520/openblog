@@ -16,6 +16,12 @@ export interface ResolvedDisplay {
   copyright: string;
 }
 
+export interface ResolvedTags {
+  route: string;
+  label: string;
+  nav: boolean;
+}
+
 export interface ResolvedHome {
   latest: number;
   /** Collection names, already checked against what is declared. */
@@ -40,6 +46,7 @@ export interface ResolvedSite {
   basePath: string;
   collections: ResolvedCollection[];
   home: ResolvedHome;
+  tags: ResolvedTags;
   social: SocialLink[];
   display: ResolvedDisplay;
   nav: NavLink[];
@@ -72,6 +79,11 @@ export function resolveConfig(config: SiteConfig): ResolvedSite {
     home: {
       latest: config.home?.latest ?? 5,
       collections: config.home?.collections ?? collections.map((collection) => collection.name)
+    },
+    tags: {
+      route: stripTrailingSlash(config.tags?.route ?? "/tags"),
+      label: config.tags?.label ?? "Tags",
+      nav: config.tags?.nav ?? false
     },
     social: config.social ?? [],
     display: {

@@ -11,10 +11,13 @@ export {
   getPage,
   listAllEntries,
   listEntries,
+  listEntriesByTag,
   listLatestEntries,
   listNavLinks,
   listPageSlugs,
   listPages,
-  listSlugs
+  listSlugs,
+  listTags,
+  routeContext
 } from "@/lib/content/read";
-export type { Entry, EntryMeta, Page, PageMeta } from "@/lib/content/read";
+export type { Entry, EntryMeta, Page, PageMeta, TagSummary } from "@/lib/content/read";

@@ -16,6 +16,7 @@ const site: ResolvedSite = {
   basePath: "/notes",
   collections: [],
   home: { latest: 5, collections: [] },
+  tags: { route: "/tags", label: "Tags", nav: false },
   social: [],
   display: { readingTime: true, copyright: "" },
   nav: [],
@@ -32,6 +33,7 @@ function entry(overrides: Partial<EntryMeta> = {}): EntryMeta {
     description: "A beginning.",
     draft: false,
     readingMinutes: 3,
+    tags: [],
     ...overrides
   };
 }

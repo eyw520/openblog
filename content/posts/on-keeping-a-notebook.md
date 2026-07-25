@@ -2,6 +2,7 @@
 title: On keeping a notebook
 date: 2025-11-09
 description: A sample post with nothing to teach, so you can see what ordinary writing looks like here.
+tags: [notebooks, writing]
 ---
 
 Every example in a new tool is about the tool. That gets tiresome, and it hides the thing you actually want to see, which is what a normal piece of writing looks like once it is set in type.
