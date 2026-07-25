@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "next dev",
     "content:check": "tsx scripts/check-content.ts",
+    "contrast:check": "tsx scripts/check-contrast.ts",
     "deploy:check": "tsx scripts/check-deploy-url.ts",
     "import:init": "tsx tools/importloop/init.ts",
     "import:snapshot": "tsx tools/importloop/snapshot.ts",

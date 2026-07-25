@@ -1,10 +1,10 @@
 # Dev workflow. `make dev` once after cloning; `make check` before every commit.
 # Every leg caches (eslint --cache, prettier --cache, tsc --incremental,
 # cspell --cache), so a warm no-change gate costs seconds.
-.PHONY: check types test lint spell content fmt hooks dev run build preview deploy clean
+.PHONY: check types test lint spell content contrast fmt hooks dev run build preview deploy clean
 
 # The gate — run all of it before declaring work done. CI runs exactly this.
-check: types test lint spell content
+check: types test lint spell content contrast
 
 types:
 	npm run typecheck
@@ -22,6 +22,10 @@ spell:
 # Validates site.config.ts, every post's frontmatter, and every internal link.
 content:
 	npm run content:check
+
+# Checks every theme palette for readable colour contrast.
+contrast:
+	npm run contrast:check
 
 # Auto-fix what the gate would flag: lint violations, then formatting.
 fmt:
