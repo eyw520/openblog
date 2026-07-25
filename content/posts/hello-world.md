@@ -17,3 +17,12 @@ Everything else is optional. `description` is the sentence under the title in th
 ## Deleting this post
 
 Delete the file. There is nothing else to clean up — no index to update, no list to edit. The archive is built from whatever files are in the folder at the moment the site is built.
+## Going beyond Markdown
+
+Sometimes a paragraph needs to stand apart from the ones around it. Markdown has no way to say that, so openblog lets you register your own tags:
+
+<callout kind="warning">
+Deleting a post removes it from the feed. Anyone who already read it keeps their copy, but the link will break for everyone else.
+</callout>
+
+That box is a component, written in `components/content/Callout.tsx` and registered in `components/registry.tsx`. Add your own the same way — the registry is the only file you touch, and the new tag works in every post immediately.

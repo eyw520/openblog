@@ -4,15 +4,20 @@ import remarkGfm from "remark-gfm";
 
 import { cn } from "@/lib/utils";
 
+import { contentComponents } from "../registry";
+
 /**
  * The one Markdown renderer. Every piece of prose on the site goes through it,
- * so the reading treatment cannot drift between a post and a page.
+ * so the reading treatment cannot drift between one page and another.
  *
  * GFM adds tables, strikethrough, and task lists. `rehype-raw` allows inline
- * HTML, which lets a writer reach for a <mark> or a <sup> when Markdown has no
- * spelling for it. That is safe here and only here: content/ is written by the
- * person who owns the repository and is rendered at build time — there is no
- * reader-submitted input anywhere in a static blog.
+ * HTML, which is what lets a writer reach for a <mark> when Markdown has no
+ * spelling for it — and what makes the component registry work at all. That is
+ * safe here and only here: content/ is written by the person who owns the
+ * repository and rendered at build time, so there is no reader-submitted input
+ * anywhere in the pipeline.
+ *
+ * To add your own tag, edit components/registry.tsx — not this file.
  */
 export function Markdown({ content, className }: { content: string; className?: string }): React.ReactElement {
   return (
@@ -20,7 +25,11 @@ export function Markdown({ content, className }: { content: string; className?: 
     // plugin's own dark palette and would override every token below. The prose
     // colors are already tokens, and tokens flip with the .dark class on their own.
     <div className={cn("prose", className)}>
-      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
+        components={contentComponents}
+      >
         {content}
       </ReactMarkdown>
     </div>
