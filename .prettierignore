@@ -1,0 +1,10 @@
+node_modules
+.next
+.next-dev
+out
+package-lock.json
+
+# Authored prose is never reformatted by a tool — content/ belongs to the writer,
+# and Markdown docs follow the one-sentence-per-line rule from AGENTS.md.
+content
+**/*.md

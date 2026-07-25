@@ -1,0 +1,56 @@
+{
+  "name": "openblog",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A Markdown-first blog framework that deploys itself to GitHub Pages.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "NEXT_BUILD_MODE=1 next build",
+    "preview": "npm run build && npx --yes serve out",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --cache --max-warnings 0 .",
+    "lint:fix": "eslint --cache --fix --max-warnings 0 .",
+    "format": "prettier --write --cache .",
+    "format:check": "prettier --check --cache .",
+    "spellcheck": "cspell --no-progress --no-must-find-files --cache \"content/**/*.md\"",
+    "test": "node scripts/test.mjs",
+    "prepare": "git config core.hooksPath .githooks"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "gray-matter": "^4.0.3",
+    "next": "^15.1.0",
+    "next-themes": "^0.4.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.0",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@tailwindcss/typography": "^0.5.15",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "cspell": "^8.17.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^17.7.0",
+    "postcss": "^8.4.49",
+    "prettier": "^3.4.2",
+    "tailwindcss": "^3.4.15",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0"
+  }
+}

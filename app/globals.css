@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * THE THEME LIVES HERE. Every color on the site resolves to one of the tokens
+ * below, so changing these values restyles the whole blog — no component edits.
+ * A lint rule rejects hex/rgb literals in components to keep that true.
+ *
+ * Values are unwrapped HSL channels ("H S% L%") so Tailwind can apply opacity
+ * to them. The default direction is ink on paper: a cool white sheet, a
+ * blue-black text ink, and the same ink at full saturation for links.
+ */
+
+@layer base {
+  :root {
+    /* The sheet, and the panels raised off it. */
+    --paper: 210 20% 98%;
+    --surface: 210 22% 96%;
+
+    /* Text. `ink-muted` is for dates, captions, and other secondary type. */
+    --ink: 215 35% 12%;
+    --ink-muted: 215 14% 42%;
+
+    /* Hairlines: borders, dividers, the rule under the masthead. */
+    --rule: 214 18% 88%;
+
+    /* Links and interactive accents — the writing ink, undiluted. */
+    --accent: 224 60% 38%;
+    --accent-contrast: 210 20% 98%;
+
+    /* Rubrication: reserved for drafts and warnings. Used sparingly, by design. */
+    --rubric: 4 55% 45%;
+
+    /* The reading measure. Prose never exceeds this width. */
+    --measure: 68ch;
+  }
+
+  .dark {
+    --paper: 216 30% 9%;
+    --surface: 216 26% 13%;
+
+    --ink: 210 18% 92%;
+    --ink-muted: 214 12% 62%;
+
+    --rule: 215 18% 21%;
+
+    /* Lifted on dark so link text keeps its contrast against the sheet. */
+    --accent: 216 78% 72%;
+    --accent-contrast: 216 30% 9%;
+
+    --rubric: 6 62% 62%;
+  }
+
+  * {
+    @apply border-rule;
+  }
+
+  body {
+    @apply bg-paper text-ink font-body antialiased;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Keyboard focus must always be visible — it is the only affordance a
+     keyboard reader gets, and the default ring disappears against `paper`. */
+  :focus-visible {
+    @apply outline-accent outline-2 outline-offset-2;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

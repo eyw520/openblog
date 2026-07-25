@@ -1,0 +1,31 @@
+# dependencies
+node_modules
+
+# next
+.next
+.next-dev
+next-env.d.ts
+
+# the exported site
+out
+
+# tool caches
+.eslintcache
+.cspellcache
+*.tsbuildinfo
+
+# environments
+.env
+.env*.local
+
+# editors and OS
+.DS_Store
+.idea
+.vscode
+*.swp
+
+# logs
+npm-debug.log*
+
+# agent-local settings
+.claude/settings.local.json

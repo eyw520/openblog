@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en",
+  "files": ["content/**/*.md"],
+  "ignorePaths": ["node_modules", ".next", ".next-dev", "out"],
+  "ignoreRegExpList": ["/^---[\\s\\S]*?^---/m", "/`[^`]*`/", "/\\]\\([^)]*\\)/"],
+  "words": ["openblog", "frontmatter", "Pagefind", "rehype", "remark"]
+}
