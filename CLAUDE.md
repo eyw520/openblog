@@ -1,33 +1,64 @@
-# openblog
+# openblog — a Markdown-first blog framework that deploys itself to GitHub Pages
 
-See README.md for the human-facing overview.
+See README.md for the human-facing overview and AUTHORING.md for the writer's guide.
 This file is the map, invariants, and conventions for working in the code — don't duplicate one into the other.
 
 @AGENTS.md
 
 ## Overview
 
-Greenfield: the repo holds the engineering conventions and nothing else yet.
-The stack is unchosen beyond "node" — replace this paragraph with what the code actually becomes.
+A static blog generator built on Next.js 15 (App Router, `output: "export"`).
+Content is Markdown read from disk at build time; there is no server, no database, and no runtime data fetching anywhere.
+The people using this framework are mostly not programmers — they drive it through an agent, so an error message is a user interface and should read like one.
+
+## Commands
+
+```bash
+make run       # dev server on :3000
+make check     # the gate: typecheck, tests, lint, format, spellcheck, content
+make fmt       # auto-fix lint and formatting
+make build     # static export to out/
+make deploy    # check, build, push (GitHub Actions publishes)
+```
+
+Node 20 (`.nvmrc`).
 
 ## Layout
 
 | Path | What lives there |
 | --- | --- |
-| `.githooks/` | Commit-message gate, pre-commit gate, secret scan. `core.hooksPath` points here. |
-| `AGENTS.md` | Shared engineering conventions. |
-| `Makefile` | The verb contract: `check`, `fmt`, `hooks`, `dev`. |
+| `site.config.ts` | The blog owner's settings. The root of almost every derived value. |
+| `content/` | Authored Markdown, one folder per collection. Never reformat it. |
+| `app/` | Routes, root layout, `globals.css` theme tokens, fonts. |
+| `app/[...slug]/` | The single catch-all serving every collection index and entry. |
+| `components/registry.tsx` | The user's extension point for custom Markdown tags. |
+| `components/layout/`, `components/content/` | Chrome, and the content renderers. |
+| `lib/config/` | Config types, validation, and resolution. Pure. |
+| `lib/content/` | Frontmatter parsing, sorting, and the filesystem reader. |
+| `lib/routes.ts` | Maps URL segments to a collection index or entry. Pure. |
+| `services/content/` | `server-only` re-export of the reader, for pages to import. |
+| `scripts/` | The content checker, the export finalizer, the test runner, deploy. |
 
 ## Invariants (do not violate)
 
-- `.githooks/commit-msg` is the source of truth for commit types and scopes — this repo is scopeless (`<type>: Subject.`) over types `feat|fix|chore|clean|revert`.
-  Docs point at the hook, never the reverse.
+- **Never add a route file for a collection.** Collections are declared in `site.config.ts` and served by `app/[...slug]/page.tsx`. A new route file means the config abstraction has been abandoned; fix the resolver in `lib/routes.ts` instead.
+- **Never write a color literal in `app/` or `components/`.** Every color is a token in `app/globals.css`, so one file restyles the site. ESLint fails the build on hex and `rgb()`/`hsl()` literals — the rule exists because a literal silently breaks every user's theme override.
+- **`site.config.ts` is the only source of site identity.** `basePath`, canonical URLs, the feed, the sitemap, and the nav are all derived from its `url` and `collections`. Do not hardcode any of them.
+- **Validation rules live in `lib/`, never in a script.** `scripts/check-content.ts` imports the real config loader and the real reader, so the gate cannot drift from the build. A checker that reimplements a rule is a checker that eventually disagrees with it.
+- **Errors reaching a blog owner name the file, the field, and the fix.** Compare `lib/config/validate.ts` and `lib/content/entry.ts` before writing a new one.
+- **A malformed post fails the build.** Never skip or silently drop content; an author who believes they published something must not be quietly wrong.
 
-## Conventions (project-specific)
+## Conventions
 
-<stack pins, patterns, naming, test markers — anything beyond AGENTS.md>
+- `lib/` is pure and tested (`*.test.ts`, node:test via tsx). `services/` is thin `server-only` I/O over it. Push logic out of components into `lib/` and assert it there — there is no DOM test tier.
+- Build output must be reproducible: sorting is stable, and the feed is dated from the newest entry rather than the clock.
+- Dates are calendar days formatted in UTC (`lib/format-date.ts`). Never format a post date in local time; it shifts the day for readers west of UTC.
+- Commit messages: `<type>: Sentence case ending with period.`, type ∈ feat|fix|chore|clean|revert. No scopes. Enforced by `.githooks/commit-msg`.
 
 ## Gotchas
 
-- The Makefile's gate legs are guarded on `package.json` existing and no-op until it does, so `make check` is green on an empty tree.
-  That guard is what lets the pre-commit hook pass before the app exists; delete it with the first real toolchain, or the gate stays silently empty.
+- **`dark:prose-invert` is forbidden.** It replaces the typography plugin's color variables with its own dark palette, overriding every theme token. The tokens already flip with the `.dark` class.
+- **`lib/content/read.ts` deliberately lacks `server-only`.** The gate script must import it, and `server-only` throws outside a React Server Component. `services/content/` adds the guard for pages; importing `node:fs` already keeps it out of client bundles.
+- **`next.config.ts` imports `lib/config` with a relative path**, not `@/`. It loads outside webpack, where the alias does not exist.
+- Dev and build use different output directories (`.next-dev` / `.next`), gated on `NEXT_BUILD_MODE`, so a running dev server cannot poison a production build.
+- Drafts are included only when `NODE_ENV === "development"`, so `listEntries` returns different results in dev and build. That is intended.
