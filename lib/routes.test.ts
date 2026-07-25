@@ -32,7 +32,8 @@ function collection(name: string, route: string): ResolvedCollection {
     feed: true,
     fields: {},
     layout: "default",
-    indexLayout: "list"
+    indexLayout: "list",
+    toc: false
   };
 }
 

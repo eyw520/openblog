@@ -11,6 +11,7 @@ export { Markdown } from "./Markdown";
 export { PageArticle } from "./PageArticle";
 export { Photo } from "./Photo";
 export { PullQuote } from "./PullQuote";
+export { TableOfContents } from "./TableOfContents";
 export { TagIndex } from "./TagIndex";
 export { TagPage } from "./TagPage";
 export { VideoEmbed } from "./VideoEmbed";

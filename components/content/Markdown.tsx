@@ -1,6 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
+import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
 import { cn } from "@/lib/utils";
@@ -30,7 +31,7 @@ export function Markdown({ content, className }: { content: string; className?: 
         remarkPlugins={[remarkGfm]}
         // rehypeRaw first: it parses the raw HTML into nodes that highlighting
         // then walks. Reversed, fenced code inside raw HTML goes uncoloured.
-        rehypePlugins={[rehypeRaw, [rehypeHighlight, { detect: false, ignoreMissing: true }]]}
+        rehypePlugins={[rehypeRaw, rehypeSlug, [rehypeHighlight, { detect: false, ignoreMissing: true }]]}
         components={contentComponents}
       >
         {content}

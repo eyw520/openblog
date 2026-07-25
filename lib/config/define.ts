@@ -66,6 +66,11 @@ export interface CollectionConfig {
    * A "grid" archive shows each entry's cover image.
    */
   indexLayout?: IndexLayout;
+  /**
+   * Show a contents list on entries with enough headings. Defaults to false;
+   * useful for long-form collections like papers or guides.
+   */
+  toc?: boolean;
 }
 
 /**

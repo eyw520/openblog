@@ -23,6 +23,7 @@ export interface ResolvedCollection {
   fields: FieldSchema;
   layout: EntryLayout;
   indexLayout: IndexLayout;
+  toc: boolean;
 }
 
 export interface ResolvedTheme {
@@ -144,7 +145,8 @@ function resolveCollection(collection: CollectionConfig): ResolvedCollection {
     feed: collection.feed ?? true,
     fields: collection.fields ?? {},
     layout: collection.layout ?? "default",
-    indexLayout: collection.indexLayout ?? "list"
+    indexLayout: collection.indexLayout ?? "list",
+    toc: collection.toc ?? false
   };
 }
 
