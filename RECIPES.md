@@ -29,6 +29,10 @@ If a request is not here, say so rather than improvising something that looks li
 | "Add tags" | Add `tags: [one, two]` to a post's frontmatter. Tag pages appear on their own. |
 | "Let people browse tags from the menu" | `tags: { nav: true }` in `site.config.ts`. |
 | "Reorder the menu" | `navOrder` on a page, or write `nav` out by hand in `site.config.ts` for full control. |
+| "Show pictures instead of a list" | `indexLayout: "grid"` on that collection. Uses each entry's `image`. |
+| "Add a contents list to long posts" | `toc: true` on that collection. Appears once a post has three headings. |
+| "These posts are a series" | `series: The Name` in each post's frontmatter, plus `seriesPart: 1`, `2`… if the order is not the date order. |
+| "Show related posts" | Already on wherever posts share tags. Untagged posts show nothing. |
 
 ## Appearance
 
@@ -46,11 +50,15 @@ If a request is not here, say so rather than improvising something that looks li
 | The request | What to do |
 | --- | --- |
 | "Add an image" | Put the file in `public/`, then `<photo src="/name.jpg" alt="..." caption="..."></photo>`, or plain Markdown `![alt](/name.jpg)`. |
+| "Add several photos" | `<gallery images="/a.jpg|What a shows, /b.jpg|What b shows" caption="Optional"></gallery>`. |
 | "Add a video" | `<video-embed url="<the YouTube or Vimeo link>"></video-embed>`. |
 | "Highlight this paragraph" | `<callout>` , or `<callout kind="warning">`. |
 | "Make the opening paragraph bigger" | `<lead>…</lead>`. |
+| "Pull out a line, magazine style" | `<pull-quote source="Optional">…</pull-quote>`. |
 | "Colour my code samples" | Already on. Put the language after the opening fence: ```` ```python ````. |
-| "I need something none of these do" | Write it in `components/content/`, register it in `components/registry.tsx`. That is the only file to touch. |
+| "Add a picture at the top of the post" | `image: /name.jpg` and `imageAlt: what it shows` in the frontmatter. Also used for link previews and grid archives. |
+| "I need a tag none of these give me" | Write it in `components/content/`, register it in `components/registry.tsx`. That is the only file to touch. |
+| "I need new notation" (maths, diagrams) | Add the remark/rehype plugin to `contentPlugins` in `components/registry.tsx`. Never edit `Markdown.tsx`. |
 
 **Every custom tag needs a closing tag.** `<photo ... />` silently swallows the rest of the post; `make check` catches it and names the line.
 
@@ -63,6 +71,9 @@ If a request is not here, say so rather than improvising something that looks li
 | "Comments only on essays" | `comments.collections: ["posts"]`. |
 | "Where is the RSS feed?" | `/feed.xml`, always on. `feed: false` on a collection excludes it. |
 | "Keep this out of search engines" | The sitemap is generated from published content; make the post a draft instead. |
+| "Make my recipes show up properly on Google" | Already done — a `recipe` collection emits schema.org Recipe markup from its declared fields. |
+| "Make shared links show a picture" | Give the post an `image` and `imageAlt`. |
+| "People want to print my recipes" | Already handled; a print stylesheet drops the chrome and writes out link URLs. |
 | "Publish the site" | `make deploy`. First time only: Settings → Pages → Source → GitHub Actions. |
 | "Use my own domain" | Set `url` to `https://yourdomain.com`. The `CNAME` file is written automatically. |
 | "It deployed with no styling" | `url` is wrong. It must be the full published address, including the repository subdirectory on GitHub Pages. |
@@ -110,12 +121,60 @@ Create `content/recipes/`, and every file in it is checked against that shape.
 
 To write a layout of your own, copy `components/content/RecipeArticle.tsx`, add it to `entryLayouts` in `components/layouts.tsx`, and add its name to `ENTRY_LAYOUTS` in `lib/config/define.ts` so a typo is caught by the gate.
 
-| Blog | Fields worth declaring | Layout |
-| --- | --- | --- |
-| Food | `servings`, `prepMinutes`, `cookMinutes`, `ingredients`, `difficulty` | `recipe` |
-| Travel | `country`, `visited`, `coordinates` | `default` is usually enough |
-| Research | `authors`, `doi`, `status`, `published` | `default`, or one showing an abstract |
-| Writing | none | `default` |
+### Four blueprints
+
+Copy the collection that fits, then create the matching folder under `content/`.
+
+**A food blog.** The recipe layout puts ingredients beside the method; the grid archive shows cover photos; schema.org Recipe markup is emitted from these fields automatically.
+
+```ts
+{
+  name: "recipes", label: "Recipes", route: "/recipes",
+  layout: "recipe", indexLayout: "grid",
+  fields: {
+    servings: { type: "number", required: true },
+    prepMinutes: { type: "number" },
+    cookMinutes: { type: "number" },
+    ingredients: { type: "list", required: true },
+    difficulty: { type: "choice", options: ["easy", "medium", "hard"] }
+  }
+}
+```
+
+**A travel blog.** Trips are usually several posts, so use `series` in the frontmatter; `<gallery>` carries the photographs.
+
+```ts
+{
+  name: "trips", label: "Travels", route: "/travels",
+  indexLayout: "grid",
+  fields: {
+    country: { type: "text", required: true },
+    visited: { type: "date" },
+    coordinates: { type: "list", display: false }
+  }
+}
+```
+
+**A research blog.** Long pieces want a contents list; footnotes (`[^1]`) and syntax highlighting already work. For mathematics, add `remark-math`/`rehype-katex` to `contentPlugins`.
+
+```ts
+{
+  name: "papers", label: "Papers", route: "/papers",
+  toc: true,
+  fields: {
+    authors: { type: "list" },
+    doi: { type: "text", label: "DOI" },
+    status: { type: "choice", options: ["draft", "preprint", "published"] },
+    venue: { type: "text" }
+  }
+}
+```
+
+**A writing blog.** The default. Declare nothing; `series` handles multi-part essays.
+
+```ts
+{ name: "posts", label: "Writing", route: "/writing" }
+```
 
 ## Not supported
 

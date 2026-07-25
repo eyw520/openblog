@@ -29,6 +29,10 @@ Save it as `content/posts/a-morning-walk.md` and it publishes at `/writing/a-mor
 | `updated` | No | A revision date, shown next to the original. Also `YYYY-MM-DD`. |
 | `author` | No | Overrides the site author for this post alone. |
 | `tags` | No | A list, written `tags: [maps, travel]`. Creates tag pages automatically. |
+| `image` | No | A picture for the top of the post, e.g. `/harbour.jpg`. Also used for link previews. |
+| `imageAlt` | With `image` | What the picture shows, for readers who cannot see it. |
+| `series` | No | The name of a sequence this post belongs to, e.g. `Winter in Lisbon`. |
+| `seriesPart` | No | Its position in that sequence. Without it, series order follows the date. |
 
 Dates must be written year-month-day. `2026-07-25` is right; `July 25 2026` and `07/25/2026` are both rejected when you run `make check`, because guessing which number is the month is how a blog ends up with posts dated in the wrong order.
 
@@ -101,6 +105,20 @@ Add `wide="true"` to let a picture spread past the text on a wide screen.
 <lead>The tide was out, and the harbour was a field of mud.</lead>
 ```
 
+**A gallery** of several pictures. Each is a path and a description, separated by a bar:
+
+```markdown
+<gallery images="/a.jpg|Boats at low tide, /b.jpg|The harbour wall" caption="Newlyn, March"></gallery>
+```
+
+Commas inside a description are fine — a new picture only starts where a new path does.
+
+**A pull quote**, to slow a reader down:
+
+```markdown
+<pull-quote source="Joan Didion">We tell ourselves stories in order to live.</pull-quote>
+```
+
 ### Always write the closing tag
 
 ```markdown
@@ -111,6 +129,26 @@ Add `wide="true"` to let a picture spread past the text on a wide screen.
 The second form looks reasonable and is the one most people try, but HTML only allows a handful of built-in tags to close themselves that way. Any other tag written like that stays open, and the whole rest of your post becomes part of it — which means it disappears from the page. `make check` catches this and names the line, so you will not find out from a reader.
 
 You can add your own tags like these. See "Adding a component" below.
+
+## Series
+
+When several posts belong together — a trip, a multi-part essay, a set of papers — name the sequence in each one:
+
+```markdown
+series: Winter in Lisbon
+seriesPart: 1
+```
+
+Every post in the series then shows the full list, marks where the reader is, and links to the rest. Leave out `seriesPart` and the parts are ordered by date. A series of one shows nothing, since that is just a post.
+
+## Pictures at the top of a post
+
+```markdown
+image: /harbour.jpg
+imageAlt: Fishing boats at low tide
+```
+
+This picture is used three ways: at the top of a grid archive, as the preview when someone shares the link, and in the structured description search engines read. `imageAlt` is required whenever you set `image` — a picture with no description is silence to anyone using a screen reader.
 
 ## Tags
 
