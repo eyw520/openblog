@@ -1,7 +1,6 @@
-import type { ResolvedCollection } from "@/lib/config";
-import type { EntryMeta } from "@/lib/content/entry";
 import { groupByYear } from "@/lib/content/sort";
 
+import type { IndexLayoutProps } from "../layouts";
 import { EntryRow } from "./EntryRow";
 
 /**
@@ -12,15 +11,7 @@ import { EntryRow } from "./EntryRow";
  * and each line stays short enough to scan. On narrow screens the rail folds
  * above its group, which keeps the reading order intact.
  */
-export function CollectionIndex({
-  collection,
-  entries,
-  locale
-}: {
-  collection: ResolvedCollection;
-  entries: EntryMeta[];
-  locale: string;
-}): React.ReactElement {
+export function CollectionIndex({ collection, entries, locale }: IndexLayoutProps): React.ReactElement {
   const groups = groupByYear(entries);
 
   return (

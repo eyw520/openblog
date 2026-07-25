@@ -3,6 +3,7 @@ import type {
   Author,
   CollectionConfig,
   EntryLayout,
+  IndexLayout,
   NavLink,
   SiteConfig,
   SocialLink,
@@ -21,6 +22,7 @@ export interface ResolvedCollection {
   feed: boolean;
   fields: FieldSchema;
   layout: EntryLayout;
+  indexLayout: IndexLayout;
 }
 
 export interface ResolvedTheme {
@@ -141,7 +143,8 @@ function resolveCollection(collection: CollectionConfig): ResolvedCollection {
     nav: collection.nav ?? true,
     feed: collection.feed ?? true,
     fields: collection.fields ?? {},
-    layout: collection.layout ?? "default"
+    layout: collection.layout ?? "default",
+    indexLayout: collection.indexLayout ?? "list"
   };
 }
 

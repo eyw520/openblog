@@ -1,6 +1,8 @@
 import type { ResolvedCollection } from "@/lib/config";
 import type { Entry, EntryMeta } from "@/lib/content/entry";
 
+import { CollectionGrid } from "./content/CollectionGrid";
+import { CollectionIndex } from "./content/CollectionIndex";
 import { EntryArticle } from "./content/EntryArticle";
 import { RecipeArticle } from "./content/RecipeArticle";
 
@@ -33,4 +35,20 @@ export interface EntryLayoutProps {
 export const entryLayouts = {
   default: EntryArticle,
   recipe: RecipeArticle
+};
+
+/** What an archive layout is handed. */
+export interface IndexLayoutProps {
+  collection: ResolvedCollection;
+  entries: EntryMeta[];
+  locale: string;
+}
+
+/**
+ * How a collection's archive is arranged. Same pairing rule as above: a name
+ * here and in INDEX_LAYOUTS in lib/config/define.ts.
+ */
+export const indexLayouts = {
+  list: CollectionIndex,
+  grid: CollectionGrid
 };

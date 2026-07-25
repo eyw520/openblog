@@ -1,5 +1,12 @@
 import { FIELD_TYPES } from "../content/fields";
-import { ENTRY_LAYOUTS, SORT_ORDERS, type SiteConfig, type SortOrder, THEME_PRESETS } from "./define";
+import {
+  ENTRY_LAYOUTS,
+  INDEX_LAYOUTS,
+  SORT_ORDERS,
+  type SiteConfig,
+  type SortOrder,
+  THEME_PRESETS
+} from "./define";
 
 /**
  * Checks a site.config.ts for the mistakes that would otherwise surface as a
@@ -210,6 +217,16 @@ function validateCollections(collections: SiteConfig["collections"], field: Fiel
         `${at}.layout`,
         `"${collection.layout}" is not a layout. Choose one of: ${ENTRY_LAYOUTS.join(", ")}, ` +
           "or add yours to components/layouts.tsx and to ENTRY_LAYOUTS in lib/config/define.ts."
+      );
+    }
+
+    if (
+      collection.indexLayout !== undefined &&
+      !(INDEX_LAYOUTS as readonly string[]).includes(collection.indexLayout)
+    ) {
+      field(
+        `${at}.indexLayout`,
+        `"${collection.indexLayout}" is not an archive layout. Choose one of: ${INDEX_LAYOUTS.join(", ")}.`
       );
     }
 

@@ -61,6 +61,11 @@ export interface CollectionConfig {
    * Defaults to "default".
    */
   layout?: EntryLayout;
+  /**
+   * How this collection's archive page is arranged. Defaults to "list".
+   * A "grid" archive shows each entry's cover image.
+   */
+  indexLayout?: IndexLayout;
 }
 
 /**
@@ -71,6 +76,15 @@ export interface CollectionConfig {
 export type EntryLayout = "default" | "recipe";
 
 export const ENTRY_LAYOUTS: readonly EntryLayout[] = ["default", "recipe"];
+
+/**
+ * How a collection's archive is arranged. "list" is the dated index; "grid"
+ * shows cover images, which is what a recipe or photography archive wants.
+ * Adding one means a component in components/layouts.tsx and a name here.
+ */
+export type IndexLayout = "list" | "grid";
+
+export const INDEX_LAYOUTS: readonly IndexLayout[] = ["list", "grid"];
 
 /**
  * Tag browsing. Tags themselves need no configuration — add `tags:` to a post's

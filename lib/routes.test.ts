@@ -31,7 +31,8 @@ function collection(name: string, route: string): ResolvedCollection {
     nav: true,
     feed: true,
     fields: {},
-    layout: "default"
+    layout: "default",
+    indexLayout: "list"
   };
 }
 

@@ -1,5 +1,6 @@
 export { Callout } from "./Callout";
 export { Comments } from "./Comments";
+export { CollectionGrid } from "./CollectionGrid";
 export { CollectionIndex } from "./CollectionIndex";
 export { EntryArticle } from "./EntryArticle";
 export { FieldList } from "./FieldList";

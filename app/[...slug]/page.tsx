@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { CollectionIndex, PageArticle, TagIndex, TagPage } from "@/components/content";
+import { PageArticle, TagIndex, TagPage } from "@/components/content";
 import { PageLayout } from "@/components/layout";
-import { entryLayouts } from "@/components/layouts";
+import { entryLayouts, indexLayouts } from "@/components/layouts";
 import { site } from "@/lib/config";
 import { entrySegments, indexSegments, pathSegments, resolveRoute } from "@/lib/routes";
 import {
@@ -153,9 +153,10 @@ export default async function ContentPage({
   }
 
   if (target.kind === "index") {
+    const Index = indexLayouts[target.collection.indexLayout];
     return (
       <PageLayout>
-        <CollectionIndex
+        <Index
           collection={target.collection}
           entries={listEntries(target.collection.name)}
           locale={site.locale}
