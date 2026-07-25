@@ -77,6 +77,7 @@ If a request is not here, say so rather than improvising something that looks li
 | "Publish the site" | `make deploy`. First time only: Settings → Pages → Source → GitHub Actions. |
 | "Use my own domain" | Set `url` to `https://yourdomain.com`. The `CNAME` file is written automatically. |
 | "Change the site icon" | Replace `public/favicon.svg`. Nothing else to edit. |
+| "Who owns my posts?" | You do. `LICENSE` is MIT and covers the framework code, not `content/`. See "License, and who owns what" in README.md. |
 | "It deployed with no styling" | `url` is wrong. Run `npm run deploy:check` — it compares `url` against the git remote and prints the correct line. |
 | "They have no GitHub account" | README "Starting from nothing" walks it. Use this template (not Fork); the repository's *name* decides the blog's address. |
 

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "A Markdown-first blog framework that deploys itself to GitHub Pages.",
+  "author": "eyw520",
   "license": "MIT",
   "engines": {
     "node": ">=20"

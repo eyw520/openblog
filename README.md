@@ -113,6 +113,22 @@ Most of what people want from a blog is already a setting here, and [RECIPES.md]
 
 [CLAUDE.md](CLAUDE.md) is the map of the codebase itself: its structure, its rules, and the reasons behind them. Read it before changing code.
 
-## License
+## License, and who owns what
 
-MIT.
+openblog is [MIT licensed](LICENSE) — use it, change it, publish with it, no
+strings.
+
+If you started from the template, your copy contains that `LICENSE` file, and it
+carries the framework author's name. That is about the *code*, not your writing.
+Everything you put in `content/` is yours, and the licence says nothing about it.
+
+Two things worth doing on a blog you intend to keep:
+
+- Add a line to `LICENSE` saying so, or add a second file — `CONTENT-LICENSE`,
+  say — stating the terms for your posts. "All rights reserved" is a perfectly
+  ordinary choice, and so is a Creative Commons licence if you would rather
+  people could share your work.
+- Put your own name in `site.config.ts` under `author`, and consider
+  `display.copyright` for a line in the footer.
+
+None of this is legal advice; it is the arrangement most personal blogs use.
