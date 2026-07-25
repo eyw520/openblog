@@ -16,7 +16,10 @@ import { cn } from "@/lib/utils";
  */
 export function Markdown({ content, className }: { content: string; className?: string }): React.ReactElement {
   return (
-    <div className={cn("prose dark:prose-invert", className)}>
+    // Deliberately no `dark:prose-invert`: that modifier swaps in the typography
+    // plugin's own dark palette and would override every token below. The prose
+    // colors are already tokens, and tokens flip with the .dark class on their own.
+    <div className={cn("prose", className)}>
       <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
         {content}
       </ReactMarkdown>
