@@ -18,6 +18,7 @@ const site: ResolvedSite = {
   home: { latest: 5, collections: [] },
   tags: { route: "/tags", label: "Tags", nav: false },
   comments: null,
+  theme: { preset: "ink" as const },
   social: [],
   display: { readingTime: true, copyright: "" },
   nav: [],

@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }): React.ReactElement {
   return (
-    <html lang={site.locale} suppressHydrationWarning>
+    <html lang={site.locale} data-preset={site.theme.preset} suppressHydrationWarning>
       <body className={`${displayFont.variable} ${bodyFont.variable} min-h-screen`}>
         <ThemeProvider>{children}</ThemeProvider>
       </body>

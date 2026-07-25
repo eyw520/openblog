@@ -8,11 +8,22 @@
  * A lint rule rejects hex/rgb literals in components to keep that true.
  *
  * Values are unwrapped HSL channels ("H S% L%") so Tailwind can apply opacity
- * to them. The default direction is ink on paper: a cool white sheet, a
- * blue-black text ink, and the same ink at full saturation for links.
+ * to them.
+ *
+ * Three complete palettes ship. Pick one with `theme.preset` in site.config.ts;
+ * "ink" is the default and is the block directly below. To invent your own,
+ * copy a preset pair, rename it, and add the name to ThemePreset in
+ * lib/config/define.ts so a typo is still caught.
+ *
+ * On the selectors: each preset needs BOTH a light and a dark block. Preset
+ * blocks sit after the base ones and win on specificity — :root[data-preset]
+ * (0,2,0) over :root (0,1,0), and :root[data-preset].dark (0,3,0) over
+ * everything. A preset that defined only a light block would show those light
+ * colors in dark mode.
  */
 
 @layer base {
+  /* ── ink (default) — a cool sheet, blue-black text, writing-ink accent ── */
   :root {
     /* The sheet, and the panels raised off it. */
     --paper: 210 20% 98%;
@@ -25,7 +36,7 @@
     /* Hairlines: borders, dividers, the rule under the masthead. */
     --rule: 214 18% 88%;
 
-    /* Links and interactive accents — the writing ink, undiluted. */
+    /* Links and interactive accents. */
     --accent: 224 60% 38%;
     --accent-contrast: 210 20% 98%;
 
@@ -36,20 +47,62 @@
     --measure: 68ch;
   }
 
-  .dark {
+  :root.dark {
     --paper: 216 30% 9%;
     --surface: 216 26% 13%;
-
     --ink: 210 18% 92%;
     --ink-muted: 214 12% 62%;
-
     --rule: 215 18% 21%;
-
     /* Lifted on dark so link text keeps its contrast against the sheet. */
     --accent: 216 78% 72%;
     --accent-contrast: 216 30% 9%;
-
     --rubric: 6 62% 62%;
+  }
+
+  /* ── rust — warm paper, soft black, a fired-brick accent ── */
+  :root[data-preset="rust"] {
+    --paper: 36 30% 97%;
+    --surface: 36 26% 94%;
+    --ink: 25 20% 14%;
+    --ink-muted: 25 10% 40%;
+    --rule: 32 18% 87%;
+    --accent: 12 62% 42%;
+    --accent-contrast: 36 30% 97%;
+    --rubric: 350 55% 44%;
+  }
+
+  :root[data-preset="rust"].dark {
+    --paper: 24 18% 10%;
+    --surface: 24 16% 14%;
+    --ink: 36 20% 91%;
+    --ink-muted: 32 10% 62%;
+    --rule: 26 14% 22%;
+    --accent: 16 78% 64%;
+    --accent-contrast: 24 18% 10%;
+    --rubric: 352 66% 66%;
+  }
+
+  /* ── forest — grey-green paper, deep pine accent ── */
+  :root[data-preset="forest"] {
+    --paper: 140 14% 97%;
+    --surface: 140 14% 94%;
+    --ink: 170 22% 12%;
+    --ink-muted: 165 10% 38%;
+    --rule: 150 12% 86%;
+    --accent: 165 55% 26%;
+    --accent-contrast: 140 14% 97%;
+    --rubric: 8 52% 44%;
+  }
+
+  :root[data-preset="forest"].dark {
+    --paper: 170 20% 8%;
+    --surface: 168 18% 12%;
+    --ink: 140 12% 91%;
+    --ink-muted: 150 8% 60%;
+    --rule: 165 14% 20%;
+    --accent: 156 52% 62%;
+    --accent-contrast: 170 20% 8%;
+    --rubric: 8 60% 64%;
   }
 
   * {

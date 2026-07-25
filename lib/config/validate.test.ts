@@ -137,3 +137,9 @@ test("mailto, https, and internal social links are all accepted", () => {
   });
   assert.deepEqual(errors, []);
 });
+
+test("an unknown theme preset lists the ones that ship", () => {
+  const errors = validateConfig({ ...validConfig(), theme: { preset: "midnight" as never } });
+  assert.equal(errors.length, 1);
+  assert.match(errors[0] ?? "", /ink, rust, forest/);
+});

@@ -1,4 +1,4 @@
-import { SORT_ORDERS, type SiteConfig, type SortOrder } from "./define";
+import { SORT_ORDERS, type SiteConfig, type SortOrder, THEME_PRESETS } from "./define";
 
 /**
  * Checks a site.config.ts for the mistakes that would otherwise surface as a
@@ -31,6 +31,11 @@ export function validateConfig(config: SiteConfig): string[] {
   validateCollections(config.collections, field);
   validateHome(config, field);
   validateComments(config, field);
+
+  const preset = config.theme?.preset;
+  if (preset !== undefined && !(THEME_PRESETS as readonly string[]).includes(preset)) {
+    field("theme.preset", `"${preset}" is not a palette. Choose one of: ${THEME_PRESETS.join(", ")}.`);
+  }
 
   config.social?.forEach((link, index) => {
     const at = `social[${index}]`;

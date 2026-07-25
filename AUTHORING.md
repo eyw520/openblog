@@ -165,7 +165,15 @@ Add `collections: ["posts"]` to that block to limit comments to one section. Wit
 
 ## Changing how it looks
 
-Every color on the site is defined once, at the top of `app/globals.css`, for both the light and dark themes. Change a value there and it changes everywhere — nothing else names a color, and `make check` fails if any code tries to.
+Three palettes ship. Pick one in `site.config.ts`:
+
+```ts
+theme: { preset: "ink" }
+```
+
+`ink` is cool and blue-black, `rust` is warm with a fired-brick accent, and `forest` is grey-green with deep pine. Each works in both light and dark mode, and readers can still switch between the two.
+
+To go further, every color is defined once at the top of `app/globals.css`. Change a value there and it changes everywhere — nothing else in the codebase names a color, and `make check` fails if any code tries to. To invent your own palette, copy a preset's pair of blocks, rename it, and add the name to `ThemePreset` in `lib/config/define.ts` so a typo is still caught.
 
 The two typefaces are set in `app/fonts.ts`.
 

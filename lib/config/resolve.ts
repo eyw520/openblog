@@ -1,4 +1,12 @@
-import type { Author, CollectionConfig, NavLink, SiteConfig, SocialLink, SortOrder } from "./define";
+import type {
+  Author,
+  CollectionConfig,
+  NavLink,
+  SiteConfig,
+  SocialLink,
+  SortOrder,
+  ThemePreset
+} from "./define";
 
 /** A collection with every optional field filled in. */
 export interface ResolvedCollection {
@@ -9,6 +17,10 @@ export interface ResolvedCollection {
   sort: SortOrder;
   nav: boolean;
   feed: boolean;
+}
+
+export interface ResolvedTheme {
+  preset: ThemePreset;
 }
 
 export interface ResolvedDisplay {
@@ -60,6 +72,7 @@ export interface ResolvedSite {
   /** Null when no comment provider is configured. */
   comments: ResolvedComments | null;
   social: SocialLink[];
+  theme: ResolvedTheme;
   display: ResolvedDisplay;
   nav: NavLink[];
   /**
@@ -104,6 +117,7 @@ export function resolveConfig(config: SiteConfig): ResolvedSite {
         }
       : null,
     social: config.social ?? [],
+    theme: { preset: config.theme?.preset ?? "ink" },
     display: {
       readingTime: config.display?.readingTime ?? true,
       copyright: config.display?.copyright ?? ""

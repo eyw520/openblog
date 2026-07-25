@@ -131,3 +131,8 @@ test("display options default to showing reading time and no copyright line", ()
 test("reading time can be turned off", () => {
   assert.equal(resolveConfig(config({ display: { readingTime: false } })).display.readingTime, false);
 });
+
+test("the theme preset defaults to ink", () => {
+  assert.equal(resolveConfig(config()).theme.preset, "ink");
+  assert.equal(resolveConfig(config({ theme: { preset: "forest" } })).theme.preset, "forest");
+});

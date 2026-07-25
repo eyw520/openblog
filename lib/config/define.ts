@@ -92,6 +92,19 @@ export interface SocialLink {
   href: string;
 }
 
+/**
+ * The shipped colour palettes, defined in app/globals.css. Adding your own
+ * means adding a block there and a name here, so a typo is still caught.
+ */
+export type ThemePreset = "ink" | "rust" | "forest";
+
+export const THEME_PRESETS: readonly ThemePreset[] = ["ink", "rust", "forest"];
+
+export interface ThemeConfig {
+  /** Which palette to use. Defaults to "ink". */
+  preset?: ThemePreset;
+}
+
 /** Small presentation choices that do not warrant editing a component. */
 export interface DisplayConfig {
   /** Show "N min read" on a post. Defaults to true. */
@@ -135,6 +148,8 @@ export interface SiteConfig {
   comments?: CommentsConfig;
   /** Ways to reach you, listed in the footer. */
   social?: SocialLink[];
+  /** Which colour palette the blog uses. */
+  theme?: ThemeConfig;
   /** Presentation choices that would otherwise mean editing a component. */
   display?: DisplayConfig;
   /** Site navigation. Defaults to every collection with `nav` left on. */

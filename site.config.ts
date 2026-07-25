@@ -67,6 +67,12 @@ export default defineConfig({
   //   { label: "GitHub", href: "https://github.com/you" }
   social: [],
 
+  // The colour palette: "ink" (cool, blue-black), "rust" (warm, brick),
+  // or "forest" (grey-green, pine). Each works in light and dark mode.
+  theme: {
+    preset: "ink"
+  },
+
   display: {
     readingTime: true
     // copyright: "© 2026 Your Name"
