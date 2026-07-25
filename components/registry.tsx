@@ -3,8 +3,10 @@ import type { AnchorHTMLAttributes, ImgHTMLAttributes, ReactNode } from "react";
 import { withBasePath } from "@/lib/paths";
 
 import { Callout } from "./content/Callout";
+import { Gallery } from "./content/Gallery";
 import { Lead } from "./content/Lead";
 import { Photo } from "./content/Photo";
+import { PullQuote } from "./content/PullQuote";
 import { VideoEmbed } from "./content/VideoEmbed";
 
 /**
@@ -30,8 +32,10 @@ import { VideoEmbed } from "./content/VideoEmbed";
  */
 export const contentComponents = {
   callout: Callout,
+  gallery: Gallery,
   lead: Lead,
   photo: Photo,
+  "pull-quote": PullQuote,
   "video-embed": VideoEmbed,
 
   // The two overrides below fix links and images that Markdown emits as plain

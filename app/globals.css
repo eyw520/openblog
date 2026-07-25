@@ -168,6 +168,49 @@
     @apply outline-accent outline-2 outline-offset-2;
   }
 
+  /*
+   * Printing. Recipes get taped to cupboard doors and papers get marked up in
+   * pen, so a printed page drops the site chrome and anything a reader cannot
+   * follow on paper, and prints link destinations after the link text.
+   */
+  @media print {
+    body {
+      background: white;
+      color: black;
+      font-size: 11pt;
+    }
+
+    header[class*="border-b"],
+    footer,
+    nav[aria-label="More in this collection"],
+    section[aria-label="Comments"],
+    iframe {
+      display: none !important;
+    }
+
+    main {
+      max-width: none;
+      padding: 0;
+    }
+
+    /* A URL is useless on paper unless it is written out. */
+    .prose a[href^="http"]::after {
+      content: " (" attr(href) ")";
+      font-size: 0.85em;
+      word-break: break-all;
+    }
+
+    /* Never split a picture or a heading across two sheets. */
+    figure,
+    img,
+    h1,
+    h2,
+    h3 {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
