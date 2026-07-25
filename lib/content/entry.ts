@@ -33,6 +33,14 @@ export interface EntryMeta {
   /** Tags as the writer typed them; addressed by their slug. Empty when none. */
   tags: string[];
   /**
+   * A cover image for the entry, e.g. "/harbour.jpg". Grid archives and link
+   * previews both need one, which is why it is built in rather than a field a
+   * collection has to declare.
+   */
+  image?: string;
+  /** What the cover image shows, for readers who cannot see it. */
+  imageAlt: string;
+  /**
    * The collection's own declared fields, already validated. Empty for a
    * collection that declares none — which is every collection by default.
    */
@@ -92,6 +100,21 @@ export function parseEntry(input: ParseEntryInput): ParseEntryResult {
     errors.push(`${file} — "draft" must be true or false, written without quotes.`);
   }
 
+  const image = readString(data.image);
+  const imageAlt = readString(data.imageAlt);
+  if (image !== undefined && !image.startsWith("/") && !/^https?:\/\//.test(image)) {
+    errors.push(
+      `${file} — "image" reads "${image}" but must start with "/" — put the file in public/ ` +
+        `and write it as image: /${image.replace(/^\.?\//, "")}`
+    );
+  }
+  if (image !== undefined && imageAlt === undefined) {
+    errors.push(
+      `${file} — "imageAlt" is missing. Describe what the picture shows, so readers using a ` +
+        `screen reader are not left with silence: imageAlt: A bowl of red lentil soup`
+    );
+  }
+
   const parsedFields = parseFields(file, input.fields ?? {}, data);
   if (!parsedFields.ok) {
     errors.push(...parsedFields.errors);
@@ -123,6 +146,8 @@ export function parseEntry(input: ParseEntryInput): ParseEntryResult {
       draft: data.draft === true,
       readingMinutes: readingMinutes(body),
       tags: tags ?? [],
+      ...(image !== undefined ? { image } : {}),
+      imageAlt: imageAlt ?? "",
       fields: parsedFields.ok ? parsedFields.fields : {},
       body
     }

@@ -37,6 +37,7 @@ function entry(overrides: Partial<EntryMeta> = {}): EntryMeta {
     readingMinutes: 3,
     tags: [],
     fields: {},
+    imageAlt: "",
     ...overrides
   };
 }

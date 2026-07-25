@@ -96,3 +96,40 @@ test("code blocks do not inflate reading time", () => {
   const withCode = `${prose}\n\n\`\`\`\n${"token ".repeat(500)}\n\`\`\``;
   assert.equal(readingMinutes(withCode), readingMinutes(prose));
 });
+
+test("a cover image is carried through with its description", () => {
+  const entry = expectOk(
+    parseEntry(input({ data: { title: "T", date: "2026-03-01", image: "/soup.jpg", imageAlt: "A bowl" } }))
+  );
+  assert.equal(entry.image, "/soup.jpg");
+  assert.equal(entry.imageAlt, "A bowl");
+});
+
+test("an entry with no cover image has none, and an empty description", () => {
+  const entry = expectOk(parseEntry(input()));
+  assert.equal(entry.image, undefined);
+  assert.equal(entry.imageAlt, "");
+});
+
+test("a cover image without a description is rejected, since silence is the alternative", () => {
+  const result = parseEntry(input({ data: { title: "T", date: "2026-03-01", image: "/soup.jpg" } }));
+  assert.equal(result.ok, false);
+  assert.match(result.ok ? "" : (result.errors[0] ?? ""), /"imageAlt" is missing/);
+});
+
+test("a relative image path is rejected with the corrected line", () => {
+  const result = parseEntry(
+    input({ data: { title: "T", date: "2026-03-01", image: "soup.jpg", imageAlt: "A bowl" } })
+  );
+  assert.equal(result.ok, false);
+  assert.match(result.ok ? "" : (result.errors[0] ?? ""), /image: \/soup\.jpg/);
+});
+
+test("an external cover image URL is accepted", () => {
+  const entry = expectOk(
+    parseEntry(
+      input({ data: { title: "T", date: "2026-03-01", image: "https://example.com/a.jpg", imageAlt: "A" } })
+    )
+  );
+  assert.equal(entry.image, "https://example.com/a.jpg");
+});

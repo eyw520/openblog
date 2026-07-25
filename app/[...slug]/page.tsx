@@ -28,6 +28,11 @@ import {
 
 type RouteParams = { slug: string[] };
 
+/** A path within the blog as a full URL; an external URL is left as it is. */
+function absoluteUrl(path: string): string {
+  return /^https?:\/\//.test(path) ? path : `${site.url}${path}`;
+}
+
 /** The complete list of pages to export. Anything absent here is not built. */
 export function generateStaticParams(): RouteParams[] {
   const tags = listTags();
@@ -81,6 +86,9 @@ export async function generateMetadata({ params }: { params: Promise<RouteParams
         return {};
       }
       const description = entry.description || site.description;
+      // A shared link with no picture is a wall of text in every feed reader
+      // and chat app, so the cover image is passed through when there is one.
+      const images = entry.image ? [{ url: absoluteUrl(entry.image), alt: entry.imageAlt }] : undefined;
       return {
         title: entry.title,
         description,
@@ -89,7 +97,14 @@ export async function generateMetadata({ params }: { params: Promise<RouteParams
           title: entry.title,
           description,
           publishedTime: entry.date,
-          url: `${site.url}${entry.href}`
+          url: `${site.url}${entry.href}`,
+          ...(images ? { images } : {})
+        },
+        twitter: {
+          card: images ? "summary_large_image" : "summary",
+          title: entry.title,
+          description,
+          ...(images ? { images } : {})
         }
       };
     }
