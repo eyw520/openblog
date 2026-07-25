@@ -19,7 +19,7 @@
     "prebuild": "npm run content:check",
     "build": "NEXT_BUILD_MODE=1 next build",
     "postbuild": "tsx scripts/finalize-export.ts",
-    "preview": "npm run build && npx --yes serve out",
+    "preview": "npm run build && tsx scripts/preview.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint --cache --max-warnings 0 .",
     "lint:fix": "eslint --cache --fix --max-warnings 0 .",

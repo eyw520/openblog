@@ -29,7 +29,7 @@ export default function HomePage(): React.ReactElement {
 
       {latest.length > 0 ? (
         <section className="border-rule mt-20 border-t pt-6">
-          <h2 className="font-display text-ink-muted/70 text-sm tracking-label">LATEST</h2>
+          <h2 className="font-display text-ink-muted text-sm tracking-label">LATEST</h2>
           <ul className="mt-6 space-y-8">
             {latest.map((entry) => (
               <li key={`${entry.collection}/${entry.slug}`}>

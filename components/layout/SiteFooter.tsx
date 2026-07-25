@@ -18,7 +18,7 @@ export function SiteFooter(): React.ReactElement {
             site.author.name
           )}
           {site.display.copyright ? (
-            <span className="text-ink-muted/70 ml-3">{site.display.copyright}</span>
+            <span className="text-ink-muted ml-3">{site.display.copyright}</span>
           ) : null}
         </p>
 

@@ -33,7 +33,7 @@ export function CollectionIndex({ collection, entries, locale }: IndexLayoutProp
           {groups.map((group) => (
             <section key={`${group.year}-${group.entries[0]?.slug ?? ""}`} className="border-rule border-t pt-6">
               <div className="md:grid md:grid-cols-[7rem_1fr] md:gap-x-8">
-                <h2 className="font-display text-ink-muted/70 text-sm tabular-nums tracking-label">
+                <h2 className="font-display text-ink-muted text-sm tabular-nums tracking-label">
                   {group.year}
                 </h2>
 
