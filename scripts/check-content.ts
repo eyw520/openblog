@@ -24,6 +24,28 @@ const CONTENT_DIR = path.join(process.cwd(), "content");
 // problem, and anchors and relative links resolve against a page that exists.
 const LINK_PATTERN = /\]\((\/[^)\s]*)(?:\s[^)]*)?\)|href=["'](\/[^"']*)["']/g;
 
+// Any `<tag ... />` in the prose. Harmless for the void elements below, and a
+// content-eating trap for everything else — see checkSelfClosingTags.
+const SELF_CLOSING_PATTERN = /<([a-z][a-z0-9-]*)\b[^>]*\/>/g;
+
+/** HTML elements that are allowed to close themselves, because they hold nothing. */
+const VOID_ELEMENTS = new Set([
+  "area",
+  "base",
+  "br",
+  "col",
+  "embed",
+  "hr",
+  "img",
+  "input",
+  "link",
+  "meta",
+  "param",
+  "source",
+  "track",
+  "wbr"
+]);
+
 function main(): void {
   // Importing `site` has already validated site.config.ts, and listEntries
   // validates every post's frontmatter. Both throw with their own guidance.
@@ -61,8 +83,10 @@ function main(): void {
     knownPaths.add(normalize(page.href));
   }
 
-  const problems: string[] = [];
   const files = markdownFiles(CONTENT_DIR);
+  checkSelfClosingTags(files);
+
+  const problems: string[] = [];
   let linkCount = 0;
 
   for (const file of files) {
@@ -101,6 +125,48 @@ function main(): void {
       `${entryCount} entr${entryCount === 1 ? "y" : "ies"}, ${pages.length} page(s), ` +
       `${linkCount} internal link(s) checked.`
   );
+}
+
+/**
+ * Catches `<photo ... />` and friends.
+ *
+ * HTML lets only a fixed list of elements close themselves. Any other tag
+ * written that way stays open, and the rest of the post becomes its children —
+ * so the writing after it silently disappears from the published page. The
+ * failure looks like the component ate the post, with nothing to explain why,
+ * which is exactly the kind of thing a gate should say out loud.
+ */
+function checkSelfClosingTags(files: string[]): void {
+  const problems: string[] = [];
+
+  for (const file of files) {
+    const relative = path.relative(process.cwd(), file);
+    const lines = fs.readFileSync(file, "utf-8").split("\n");
+
+    lines.forEach((line, index) => {
+      SELF_CLOSING_PATTERN.lastIndex = 0;
+      let match: RegExpExecArray | null;
+      while ((match = SELF_CLOSING_PATTERN.exec(line)) !== null) {
+        const tag = match[1];
+        if (tag === undefined || VOID_ELEMENTS.has(tag)) {
+          continue;
+        }
+        problems.push(
+          `${relative}:${index + 1} — <${tag} ... /> cannot close itself, so everything after it ` +
+            `would vanish from the page. Write it as <${tag} ...></${tag}> instead.`
+        );
+      }
+    });
+  }
+
+  if (problems.length > 0) {
+    console.error("\nSome tags would swallow the writing that follows them:\n");
+    for (const problem of problems) {
+      console.error(`  • ${problem}`);
+    }
+    console.error("");
+    process.exit(1);
+  }
 }
 
 /** Drops the query, the fragment, and any trailing slash so forms compare equal. */

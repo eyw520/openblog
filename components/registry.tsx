@@ -3,6 +3,9 @@ import type { AnchorHTMLAttributes, ImgHTMLAttributes, ReactNode } from "react";
 import { withBasePath } from "@/lib/paths";
 
 import { Callout } from "./content/Callout";
+import { Lead } from "./content/Lead";
+import { Photo } from "./content/Photo";
+import { VideoEmbed } from "./content/VideoEmbed";
 
 /**
  * YOUR COMPONENTS. This is the extension point — the one file to edit when you
@@ -27,6 +30,9 @@ import { Callout } from "./content/Callout";
  */
 export const contentComponents = {
   callout: Callout,
+  lead: Lead,
+  photo: Photo,
+  "video-embed": VideoEmbed,
 
   // The two overrides below fix links and images that Markdown emits as plain
   // HTML. Next does not apply the site's base path to those, so without this
