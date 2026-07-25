@@ -54,7 +54,16 @@ Add `draft: true` and the post disappears from the published site but stays visi
 | An image | `![Description](/photo.jpg)` |
 | A horizontal rule | `---` |
 
-Tables, ~~strikethrough~~, and task lists work too.
+Tables, ~~strikethrough~~, footnotes (`[^1]`), and task lists work too.
+
+Code samples are coloured if you name the language after the opening fence:
+
+````markdown
+```python
+def simmer(pot):
+    return pot
+```
+````
 
 Start headings at `##`. The post's title is already the `#` on the page, and a second one confuses both readers and search engines.
 

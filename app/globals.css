@@ -105,6 +105,53 @@
     --rubric: 8 60% 64%;
   }
 
+  /*
+   * Syntax highlighting, drawn from the same tokens as everything else, so it
+   * follows whichever preset is chosen and both light and dark without a
+   * separate code theme. Three tones on purpose: comments recede, keywords take
+   * the accent, and literals take the rubric. A twelve-colour scheme would
+   * fight the typography rather than serve it.
+   */
+  .hljs-comment,
+  .hljs-quote {
+    color: hsl(var(--ink-muted));
+    font-style: italic;
+  }
+
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-built_in,
+  .hljs-name,
+  .hljs-tag {
+    color: hsl(var(--accent));
+  }
+
+  .hljs-string,
+  .hljs-number,
+  .hljs-literal,
+  .hljs-regexp,
+  .hljs-attr,
+  .hljs-symbol,
+  .hljs-bullet {
+    color: hsl(var(--rubric));
+  }
+
+  .hljs-title,
+  .hljs-section,
+  .hljs-function .hljs-title,
+  .hljs-type {
+    color: hsl(var(--ink));
+    font-weight: 600;
+  }
+
+  .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .hljs-strong {
+    font-weight: 700;
+  }
+
   * {
     @apply border-rule;
   }

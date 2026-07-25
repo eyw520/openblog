@@ -49,6 +49,7 @@ If a request is not here, say so rather than improvising something that looks li
 | "Add a video" | `<video-embed url="<the YouTube or Vimeo link>"></video-embed>`. |
 | "Highlight this paragraph" | `<callout>` , or `<callout kind="warning">`. |
 | "Make the opening paragraph bigger" | `<lead>…</lead>`. |
+| "Colour my code samples" | Already on. Put the language after the opening fence: ```` ```python ````. |
 | "I need something none of these do" | Write it in `components/content/`, register it in `components/registry.tsx`. That is the only file to touch. |
 
 **Every custom tag needs a closing tag.** `<photo ... />` silently swallows the rest of the post; `make check` catches it and names the line.
@@ -120,7 +121,6 @@ To write a layout of your own, copy `components/content/RecipeArticle.tsx`, add 
 
 Say so plainly rather than building one of these unasked:
 
-- **Syntax highlighting.** Code blocks carry a `language-*` class but are not coloured.
 - **Math.** No KaTeX or MathJax; `$…$` renders literally.
 - **Structured data (JSON-LD).** Recipe and article rich results are not emitted.
 - **Search.** No built-in search. Pagefind over the exported `out/` is the natural fit if it is genuinely wanted.
