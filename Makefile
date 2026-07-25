@@ -4,7 +4,7 @@
 .PHONY: check types test lint spell fmt hooks dev run build preview clean
 
 # The gate — run all of it before declaring work done. CI runs exactly this.
-check: types test lint spell
+check: types test lint spell content
 
 types:
 	npm run typecheck
@@ -18,6 +18,10 @@ lint:
 
 spell:
 	npm run spellcheck
+
+# Validates site.config.ts, every post's frontmatter, and every internal link.
+content:
+	npm run content:check
 
 # Auto-fix what the gate would flag: lint violations, then formatting.
 fmt:
