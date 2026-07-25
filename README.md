@@ -67,9 +67,11 @@ It checks your blog for problems, builds it, and pushes. GitHub publishes it a m
 | `make build` | Build the finished site into `out/` |
 | `make deploy` | Check, build, and publish |
 
-## For contributors and coding assistants
+## Using a coding assistant
 
-[CLAUDE.md](CLAUDE.md) is the map of the codebase — its structure, its rules, and the reasons behind them. Read it before changing code.
+Most of what people want from a blog is already a setting here, and [RECIPES.md](RECIPES.md) lists them: what someone asks for on the left, the one thing to change on the right. Point your assistant at it and ask for what you want in plain words — "add an about page", "make it warmer", "let people comment" — and it will find the existing option instead of inventing something.
+
+[CLAUDE.md](CLAUDE.md) is the map of the codebase itself: its structure, its rules, and the reasons behind them. Read it before changing code.
 
 ## License
 
