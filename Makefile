@@ -1,7 +1,7 @@
 # Dev workflow. `make dev` once after cloning; `make check` before every commit.
 # Every leg caches (eslint --cache, prettier --cache, tsc --incremental,
 # cspell --cache), so a warm no-change gate costs seconds.
-.PHONY: check types test lint spell fmt hooks dev run build preview clean
+.PHONY: check types test lint spell content fmt hooks dev run build preview deploy clean
 
 # The gate — run all of it before declaring work done. CI runs exactly this.
 check: types test lint spell content
@@ -45,6 +45,10 @@ build:
 
 preview:
 	npm run preview
+
+# Check, build, then push — GitHub publishes from there.
+deploy:
+	./scripts/deploy.sh
 
 clean:
 	rm -rf .next .next-dev out node_modules .eslintcache .cspellcache tsconfig.tsbuildinfo
