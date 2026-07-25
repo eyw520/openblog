@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/format-date";
 import type { EntryLayoutProps } from "../layouts";
 import { Comments } from "./Comments";
 import { Markdown } from "./Markdown";
+import { StructuredData } from "./StructuredData";
 
 /**
  * A worked example of a custom entry layout — and a usable recipe page.
@@ -43,6 +44,8 @@ export function RecipeArticle({
 
   return (
     <article>
+      <StructuredData entry={entry} collection={collection} />
+
       <header className="border-rule max-w-measure border-b pb-8">
         <Link
           href={collection.route}

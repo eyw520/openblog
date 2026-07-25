@@ -14,6 +14,7 @@ import { RelatedEntries } from "./RelatedEntries";
 import { SeriesNav } from "./SeriesNav";
 import { TableOfContents } from "./TableOfContents";
 import { Markdown } from "./Markdown";
+import { StructuredData } from "./StructuredData";
 
 /**
  * The default entry layout: title block, prose, and the way out to neighbours.
@@ -38,6 +39,8 @@ export function EntryArticle({
 
   return (
     <article>
+      <StructuredData entry={entry} collection={collection} />
+
       <header className="border-rule max-w-measure border-b pb-8">
         <Link
           href={collection.route}

@@ -13,6 +13,7 @@ export { Photo } from "./Photo";
 export { PullQuote } from "./PullQuote";
 export { RelatedEntries } from "./RelatedEntries";
 export { SeriesNav } from "./SeriesNav";
+export { StructuredData } from "./StructuredData";
 export { TableOfContents } from "./TableOfContents";
 export { TagIndex } from "./TagIndex";
 export { TagPage } from "./TagPage";
