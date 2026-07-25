@@ -34,10 +34,11 @@ Node 20 (`.nvmrc`).
 | `content/` | Authored Markdown, one folder per collection. Never reformat it. |
 | `app/` | Routes, root layout, `globals.css` theme tokens, fonts. |
 | `app/[...slug]/` | The single catch-all serving every collection index, entry, page, and tag. |
-| `components/registry.tsx` | The user's extension point for custom Markdown tags. |
+| `components/registry.tsx` | Extension point one: custom Markdown tags. |
+| `components/layouts.tsx` | Extension point two: how a collection's entries render. |
 | `components/layout/`, `components/content/` | Chrome, and the content renderers. |
 | `lib/config/` | Config types, validation, and resolution. Pure. |
-| `lib/content/` | Frontmatter parsing, sorting, and the filesystem reader. |
+| `lib/content/` | Frontmatter parsing, per-collection field schemas, sorting, the reader. |
 | `lib/routes.ts` | Maps URL segments to a collection index, entry, page, or tag. Pure. |
 | `lib/paths.ts` | Applies the base path to raw hrefs Markdown produces. |
 | `services/content/` | `server-only` re-export of the reader, for pages to import. |
@@ -64,6 +65,7 @@ Node 20 (`.nvmrc`).
 
 - **`dark:prose-invert` is forbidden.** It replaces the typography plugin's color variables with its own dark palette, overriding every theme token. The tokens already flip with the `.dark` class.
 - **`lib/content/read.ts` deliberately lacks `server-only`.** The gate script must import it, and `server-only` throws outside a React Server Component. `services/content/` adds the guard for pages; importing `node:fs` already keeps it out of client bundles.
+- **Nothing reachable from `next.config.ts` may use the `@/` alias** — that includes everything `lib/config` imports. It loads outside webpack, where the alias does not exist.
 - **`next.config.ts` imports `lib/config` with a relative path**, not `@/`. It loads outside webpack, where the alias does not exist.
 - Dev and build use different output directories (`.next-dev` / `.next`), gated on `NEXT_BUILD_MODE`, so a running dev server cannot poison a production build.
 - Drafts are included only when `NODE_ENV === "development"`, so `listEntries` returns different results in dev and build. That is intended.

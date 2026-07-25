@@ -7,6 +7,7 @@ import { findCollection, site } from "@/lib/config";
 import type { RouteContext } from "@/lib/routes";
 
 import { parseEntry, type Entry, type EntryMeta } from "./entry";
+import type { FieldSchema } from "./fields";
 import { parsePage, sortPagesForNav, type Page, type PageMeta } from "./page";
 import { sortEntries } from "./sort";
 import { collectTags, entriesWithTag, type TagSummary } from "./tags";
@@ -173,7 +174,7 @@ export function listEntries(collectionName: string): EntryMeta[] {
   const entries: Entry[] = [];
 
   for (const slug of markdownSlugs(dir)) {
-    const result = readEntry(collection.name, collection.route, slug);
+    const result = readEntry(collection.name, collection.route, slug, collection.fields);
     if (!result.ok) {
       errors.push(...result.errors);
     } else if (result.entry) {
@@ -196,7 +197,7 @@ export function getEntry(collectionName: string, slug: string): Entry | null {
     return null;
   }
 
-  const result = readEntry(collection.name, collection.route, slug);
+  const result = readEntry(collection.name, collection.route, slug, collection.fields);
   if (!result.ok) {
     throw new Error(["This post needs attention:", "", ...result.errors.map((e) => `  • ${e}`), ""].join("\n"));
   }
@@ -218,7 +219,7 @@ export function listAllEntries(): EntryMeta[] {
 
 type ReadResult = { ok: true; entry: Entry | null } | { ok: false; errors: string[] };
 
-function readEntry(collection: string, route: string, slug: string): ReadResult {
+function readEntry(collection: string, route: string, slug: string, fields: FieldSchema): ReadResult {
   const file = path.join(CONTENT_DIR, collection, `${slug}.md`);
   if (!fs.existsSync(file)) {
     return { ok: true, entry: null };
@@ -230,7 +231,8 @@ function readEntry(collection: string, route: string, slug: string): ReadResult 
     route,
     slug,
     data,
-    body: content.trim()
+    body: content.trim(),
+    fields
   });
 
   return parsed.ok ? { ok: true, entry: parsed.entry } : { ok: false, errors: parsed.errors };

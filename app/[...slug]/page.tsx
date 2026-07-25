@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { CollectionIndex, EntryArticle, PageArticle, TagIndex, TagPage } from "@/components/content";
+import { CollectionIndex, PageArticle, TagIndex, TagPage } from "@/components/content";
 import { PageLayout } from "@/components/layout";
+import { entryLayouts } from "@/components/layouts";
 import { site } from "@/lib/config";
 import { entrySegments, indexSegments, pathSegments, resolveRoute } from "@/lib/routes";
 import {
@@ -158,9 +159,13 @@ export default async function ContentPage({
   const entries = listEntries(target.collection.name);
   const position = entries.findIndex((candidate) => candidate.slug === entry.slug);
 
+  // The collection chooses how its entries are rendered; the validator has
+  // already guaranteed this name exists in the registry.
+  const Layout = entryLayouts[target.collection.layout];
+
   return (
     <PageLayout>
-      <EntryArticle
+      <Layout
         entry={entry}
         collection={target.collection}
         locale={site.locale}

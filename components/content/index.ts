@@ -2,6 +2,7 @@ export { Callout } from "./Callout";
 export { Comments } from "./Comments";
 export { CollectionIndex } from "./CollectionIndex";
 export { EntryArticle } from "./EntryArticle";
+export { FieldList } from "./FieldList";
 export { EntryRow } from "./EntryRow";
 export { Lead } from "./Lead";
 export { Markdown } from "./Markdown";

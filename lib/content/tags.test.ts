@@ -14,7 +14,8 @@ function entry(slug: string, tags: string[]): EntryMeta {
     description: "",
     draft: false,
     readingMinutes: 1,
-    tags
+    tags,
+    fields: {}
   };
 }
 

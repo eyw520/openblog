@@ -66,10 +66,63 @@ If a request is not here, say so rather than improvising something that looks li
 | "Use my own domain" | Set `url` to `https://yourdomain.com`. The `CNAME` file is written automatically. |
 | "It deployed with no styling" | `url` is wrong. It must be the full published address, including the repository subdirectory on GitHub Pages. |
 
+## Make it another kind of blog
+
+A collection can declare its own frontmatter and pick how its entries render. This is how one framework serves a food blog, a travel blog, and a research blog without any of them editing framework code.
+
+**Declaring fields is the first step, and often the only one.** Declared fields are validated on every file in the collection and shown under the entry's title automatically — no component work:
+
+```ts
+{
+  name: "trips",
+  label: "Travels",
+  route: "/travels",
+  fields: {
+    country: { type: "text", required: true },
+    visited: { type: "date" },
+    coordinates: { type: "list", display: false }
+  }
+}
+```
+
+Types are `text`, `number`, `boolean`, `date`, `list`, and `choice` (which needs `options`). Add `required: true` to make a missing value fail the build, `label` to name it, and `display: false` to keep a field out of the automatic list while still validating and storing it.
+
+**A layout is the second step, when the arrangement itself matters.** A recipe wants its ingredients beside the method, not in a row of labels:
+
+```ts
+{
+  name: "recipes",
+  label: "Recipes",
+  route: "/recipes",
+  layout: "recipe",
+  fields: {
+    servings: { type: "number", required: true },
+    prepMinutes: { type: "number" },
+    cookMinutes: { type: "number" },
+    ingredients: { type: "list", required: true },
+    difficulty: { type: "choice", options: ["easy", "medium", "hard"] }
+  }
+}
+```
+
+Create `content/recipes/`, and every file in it is checked against that shape.
+
+To write a layout of your own, copy `components/content/RecipeArticle.tsx`, add it to `entryLayouts` in `components/layouts.tsx`, and add its name to `ENTRY_LAYOUTS` in `lib/config/define.ts` so a typo is caught by the gate.
+
+| Blog | Fields worth declaring | Layout |
+| --- | --- | --- |
+| Food | `servings`, `prepMinutes`, `cookMinutes`, `ingredients`, `difficulty` | `recipe` |
+| Travel | `country`, `visited`, `coordinates` | `default` is usually enough |
+| Research | `authors`, `doi`, `status`, `published` | `default`, or one showing an abstract |
+| Writing | none | `default` |
+
 ## Not supported
 
 Say so plainly rather than building one of these unasked:
 
+- **Syntax highlighting.** Code blocks carry a `language-*` class but are not coloured.
+- **Math.** No KaTeX or MathJax; `$…$` renders literally.
+- **Structured data (JSON-LD).** Recipe and article rich results are not emitted.
 - **Search.** No built-in search. Pagefind over the exported `out/` is the natural fit if it is genuinely wanted.
 - **Pagination.** Archives list every entry.
 - **Scheduled publishing.** A post dated in the future publishes immediately; use `draft: true` and remove it on the day.

@@ -35,6 +35,12 @@ export default defineConfig({
       // sort: "date-desc",  // or "date-asc", or "title"
       // nav: true,          // false publishes it without a navigation link
       // feed: true          // false keeps it out of the RSS feed
+      //
+      // A collection can also declare its own frontmatter fields and pick a
+      // layout — that is how this becomes a recipe blog or a travel blog.
+      // See "Make it another kind of blog" in RECIPES.md.
+      // fields: { servings: { type: "number", required: true } },
+      // layout: "recipe"
     }
   ],
 

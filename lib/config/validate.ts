@@ -1,4 +1,5 @@
-import { SORT_ORDERS, type SiteConfig, type SortOrder, THEME_PRESETS } from "./define";
+import { FIELD_TYPES } from "../content/fields";
+import { ENTRY_LAYOUTS, SORT_ORDERS, type SiteConfig, type SortOrder, THEME_PRESETS } from "./define";
 
 /**
  * Checks a site.config.ts for the mistakes that would otherwise surface as a
@@ -200,7 +201,55 @@ function validateCollections(collections: SiteConfig["collections"], field: Fiel
     if (collection.sort !== undefined && !isSortOrder(collection.sort)) {
       field(`${at}.sort`, `"${String(collection.sort)}" must be one of: ${SORT_ORDERS.join(", ")}.`);
     }
+
+    if (
+      collection.layout !== undefined &&
+      !(ENTRY_LAYOUTS as readonly string[]).includes(collection.layout)
+    ) {
+      field(
+        `${at}.layout`,
+        `"${collection.layout}" is not a layout. Choose one of: ${ENTRY_LAYOUTS.join(", ")}, ` +
+          "or add yours to components/layouts.tsx and to ENTRY_LAYOUTS in lib/config/define.ts."
+      );
+    }
+
+    validateFieldSchema(at, collection.fields, field);
   });
+}
+
+/**
+ * Checks a collection's declared field shapes. A schema is written once and
+ * governs every file in the collection, so a mistake here is multiplied across
+ * the whole section — worth catching precisely.
+ */
+function validateFieldSchema(
+  at: string,
+  fields: SiteConfig["collections"][number]["fields"],
+  field: FieldReporter
+): void {
+  for (const [name, definition] of Object.entries(fields ?? {})) {
+    const where = `${at}.fields.${name}`;
+
+    if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(name)) {
+      field(where, `"${name}" must be a plain word — it is the name written in the frontmatter.`);
+    }
+
+    if (!(FIELD_TYPES as readonly string[]).includes(definition.type)) {
+      field(`${where}.type`, `"${definition.type}" must be one of: ${FIELD_TYPES.join(", ")}.`);
+      continue;
+    }
+
+    if (definition.type === "choice" && (definition.options ?? []).length === 0) {
+      field(
+        `${where}.options`,
+        'a "choice" field must list what may be chosen, for example options: ["easy", "hard"].'
+      );
+    }
+
+    if (definition.type !== "choice" && definition.options !== undefined) {
+      field(`${where}.options`, `only a "choice" field uses options; this one is "${definition.type}".`);
+    }
+  }
 }
 
 function isNonEmpty(value: string | undefined): boolean {

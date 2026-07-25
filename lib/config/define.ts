@@ -1,3 +1,5 @@
+import type { FieldSchema } from "../content/fields";
+
 /**
  * The shape of site.config.ts — the one file a blog owner edits to make this
  * framework theirs. Everything here is authored by a human; `lib/config/resolve`
@@ -43,7 +45,32 @@ export interface CollectionConfig {
   nav?: boolean;
   /** Include this collection's entries in the RSS feed. Defaults to true. */
   feed?: boolean;
+  /**
+   * Extra frontmatter this collection's entries carry, declared once here and
+   * checked on every file. A recipes collection might declare servings and
+   * ingredients; a travels collection a country and coordinates.
+   *
+   * Declared fields are validated, exposed to layouts as `entry.fields`, and
+   * listed under the title automatically — no component work is needed to make
+   * them appear.
+   */
+  fields?: FieldSchema;
+  /**
+   * Which layout renders this collection's entries. Must be a key of
+   * `entryLayouts` in components/layouts.tsx and a name in ENTRY_LAYOUTS below.
+   * Defaults to "default".
+   */
+  layout?: EntryLayout;
 }
+
+/**
+ * The entry layouts that ship. Adding one means a component in
+ * components/layouts.tsx and a name here, so a typo is caught by the gate
+ * rather than showing the wrong page.
+ */
+export type EntryLayout = "default" | "recipe";
+
+export const ENTRY_LAYOUTS: readonly EntryLayout[] = ["default", "recipe"];
 
 /**
  * Tag browsing. Tags themselves need no configuration — add `tags:` to a post's

@@ -14,7 +14,8 @@ function entry(slug: string, date: string, title = slug): EntryMeta {
     description: "",
     draft: false,
     readingMinutes: 1,
-    tags: []
+    tags: [],
+    fields: {}
   };
 }
 

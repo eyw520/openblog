@@ -1,6 +1,8 @@
+import type { FieldSchema } from "../content/fields";
 import type {
   Author,
   CollectionConfig,
+  EntryLayout,
   NavLink,
   SiteConfig,
   SocialLink,
@@ -17,6 +19,8 @@ export interface ResolvedCollection {
   sort: SortOrder;
   nav: boolean;
   feed: boolean;
+  fields: FieldSchema;
+  layout: EntryLayout;
 }
 
 export interface ResolvedTheme {
@@ -135,7 +139,9 @@ function resolveCollection(collection: CollectionConfig): ResolvedCollection {
     description: collection.description ?? "",
     sort: collection.sort ?? "date-desc",
     nav: collection.nav ?? true,
-    feed: collection.feed ?? true
+    feed: collection.feed ?? true,
+    fields: collection.fields ?? {},
+    layout: collection.layout ?? "default"
   };
 }
 

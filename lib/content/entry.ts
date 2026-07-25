@@ -1,3 +1,6 @@
+import { isCalendarDate, toCalendarDate, todayIso } from "./dates";
+import { parseFields, type FieldSchema, type FieldValue } from "./fields";
+
 /**
  * Turning one Markdown file into one blog entry.
  *
@@ -29,6 +32,11 @@ export interface EntryMeta {
   readingMinutes: number;
   /** Tags as the writer typed them; addressed by their slug. Empty when none. */
   tags: string[];
+  /**
+   * The collection's own declared fields, already validated. Empty for a
+   * collection that declares none — which is every collection by default.
+   */
+  fields: Record<string, FieldValue>;
 }
 
 /** An entry's metadata plus its Markdown body. */
@@ -45,6 +53,8 @@ export interface ParseEntryInput {
   data: Record<string, unknown>;
   /** Markdown body with the frontmatter block already removed. */
   body: string;
+  /** The collection's declared field schema, if it has one. */
+  fields?: FieldSchema;
 }
 
 export type ParseEntryResult = { ok: true; entry: Entry } | { ok: false; errors: string[] };
@@ -66,20 +76,25 @@ export function parseEntry(input: ParseEntryInput): ParseEntryResult {
     errors.push(`${file} — "title" is missing. Add this as the first line inside the --- block: title: My Post`);
   }
 
-  const date = readString(data.date) ?? readDate(data.date);
+  const date = readString(data.date) ?? toCalendarDate(data.date) ?? undefined;
   if (date === undefined) {
-    errors.push(`${file} — "date" is missing. Add a line inside the --- block: date: ${today()}`);
+    errors.push(`${file} — "date" is missing. Add a line inside the --- block: date: ${todayIso()}`);
   } else if (!isCalendarDate(date)) {
-    errors.push(`${file} — "date" reads "${date}" but must be written as year-month-day, like ${today()}.`);
+    errors.push(`${file} — "date" reads "${date}" but must be written as year-month-day, like ${todayIso()}.`);
   }
 
-  const updated = readString(data.updated) ?? readDate(data.updated);
+  const updated = readString(data.updated) ?? toCalendarDate(data.updated) ?? undefined;
   if (updated !== undefined && !isCalendarDate(updated)) {
-    errors.push(`${file} — "updated" reads "${updated}" but must be written as year-month-day, like ${today()}.`);
+    errors.push(`${file} — "updated" reads "${updated}" but must be written as year-month-day, like ${todayIso()}.`);
   }
 
   if (data.draft !== undefined && typeof data.draft !== "boolean") {
     errors.push(`${file} — "draft" must be true or false, written without quotes.`);
+  }
+
+  const parsedFields = parseFields(file, input.fields ?? {}, data);
+  if (!parsedFields.ok) {
+    errors.push(...parsedFields.errors);
   }
 
   const tags = readTags(data.tags);
@@ -108,6 +123,7 @@ export function parseEntry(input: ParseEntryInput): ParseEntryResult {
       draft: data.draft === true,
       readingMinutes: readingMinutes(body),
       tags: tags ?? [],
+      fields: parsedFields.ok ? parsedFields.fields : {},
       body
     }
   };
@@ -148,25 +164,3 @@ function readString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
 }
 
-/**
- * YAML parses an unquoted `date: 2026-07-25` into a Date. Both spellings are
- * natural to write, so both are accepted and normalized to the ISO form.
- */
-function readDate(value: unknown): string | undefined {
-  return value instanceof Date && !Number.isNaN(value.getTime()) ? (value.toISOString().split("T")[0] ?? undefined) : undefined;
-}
-
-/** True for a "YYYY-MM-DD" string that names a real day. */
-function isCalendarDate(value: string): boolean {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return false;
-  }
-  // Round-tripping catches impossible days like 2026-02-31, which Date rolls
-  // forward into March rather than rejecting.
-  const parsed = new Date(`${value}T00:00:00Z`);
-  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().startsWith(value);
-}
-
-function today(): string {
-  return new Date().toISOString().split("T")[0] ?? "2026-01-01";
-}

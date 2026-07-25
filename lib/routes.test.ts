@@ -22,7 +22,17 @@ function collectionName(target: RouteTarget | null): string {
 }
 
 function collection(name: string, route: string): ResolvedCollection {
-  return { name, label: name, route, description: "", sort: "date-desc", nav: true, feed: true };
+  return {
+    name,
+    label: name,
+    route,
+    description: "",
+    sort: "date-desc",
+    nav: true,
+    feed: true,
+    fields: {},
+    layout: "default"
+  };
 }
 
 const posts = collection("posts", "/writing");

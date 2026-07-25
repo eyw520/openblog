@@ -130,6 +130,36 @@ Then create the folder `content/notes/` and put a Markdown file in it. The secti
 
 Options: `sort` takes `date-desc` (newest first, the default), `date-asc`, or `title`. `nav: false` publishes the section without listing it in the navigation. `feed: false` keeps it out of the RSS feed.
 
+## Fields of your own
+
+A section can carry more than a title and a date. Recipes have servings; trips have a country; papers have a DOI. Declare them once on the collection in `site.config.ts`:
+
+```ts
+{
+  name: "trips",
+  label: "Travels",
+  fields: {
+    country: { type: "text", required: true },
+    visited: { type: "date" }
+  }
+}
+```
+
+Then write them in the frontmatter like anything else:
+
+```markdown
+---
+title: Three days in Lisbon
+date: 2026-04-02
+country: Portugal
+visited: 2026-03-28
+---
+```
+
+They appear under the title automatically, and `make check` tells you if one is missing or written the wrong way — so a section of fifty recipes cannot end up with three of them quietly lacking a serving count.
+
+Types are `text`, `number`, `boolean`, `date`, `list` (written `[one, two]`), and `choice` (which needs `options: [...]`). See RECIPES.md for the full set of options.
+
 ## Adding a component
 
 Write it in `components/content/`, then register it in `components/registry.tsx`:

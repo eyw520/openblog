@@ -1,33 +1,30 @@
 import Link from "next/link";
 
-import { site, type ResolvedCollection } from "@/lib/config";
-import type { Entry, EntryMeta } from "@/lib/content/entry";
+import { site } from "@/lib/config";
+import type { EntryMeta } from "@/lib/content/entry";
 import { tagSlug } from "@/lib/content/tags";
 import { formatDate } from "@/lib/format-date";
 
+import type { EntryLayoutProps } from "../layouts";
 import { Comments } from "./Comments";
+import { FieldList } from "./FieldList";
 import { Markdown } from "./Markdown";
 
-/** One post: its title block, its prose, and the way out to its neighbours. */
+/**
+ * The default entry layout: title block, prose, and the way out to neighbours.
+ *
+ * Neighbours are in the collection's own archive order — the entry listed just
+ * above this one, and the one just below. Deliberately not "older" and "newer":
+ * a collection sorted by title has neighbours too, and those labels would be a
+ * lie there.
+ */
 export function EntryArticle({
   entry,
   collection,
   locale,
   previous,
   next
-}: {
-  entry: Entry;
-  collection: ResolvedCollection;
-  locale: string;
-  /**
-   * Neighbours in the collection's own archive order — the entry listed just
-   * above this one, and the one just below. Deliberately not "older" and
-   * "newer": a collection sorted by title has neighbours too, and those labels
-   * would be a lie there.
-   */
-  previous?: EntryMeta;
-  next?: EntryMeta;
-}): React.ReactElement {
+}: EntryLayoutProps): React.ReactElement {
   // Comments are opt-in per collection: a notes stream usually does not want
   // the same conversation an essay does. Bound to a local so the null check
   // narrows the value handed to <Comments> below.
@@ -68,6 +65,8 @@ export function EntryArticle({
           ) : null}
           {entry.draft ? <span className="text-rubric">· Draft</span> : null}
         </p>
+
+        <FieldList schema={collection.fields} fields={entry.fields} locale={locale} />
 
         {entry.tags.length > 0 ? (
           <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2">
