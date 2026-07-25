@@ -17,7 +17,8 @@ The people using this framework are mostly not programmers — they drive it thr
 
 ```bash
 make run       # dev server on :3000
-make check     # the gate: typecheck, tests, lint, format, spellcheck, content
+make check     # the gate: typecheck, tests, lint, format, spellcheck, content, contrast
+               # (npm run check is the same set, for platforms without make)
 make fmt       # auto-fix lint and formatting
 make build     # static export to out/
 make deploy    # check, build, push (GitHub Actions publishes)

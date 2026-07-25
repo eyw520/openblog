@@ -4,6 +4,10 @@
 .PHONY: check types test lint spell content contrast fmt hooks dev run build preview deploy clean
 
 # The gate — run all of it before declaring work done. CI runs exactly this.
+#
+# `npm run check` is the same set of legs in one npm script, for Windows and
+# anywhere else without make. Keep the two in step: if a leg is added here, add
+# it there.
 check: types test lint spell content contrast
 
 types:

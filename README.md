@@ -43,10 +43,19 @@ make run     # opens the blog at http://localhost:3000
 
 Leave `make run` going while you write — the site reloads as you save.
 
-> **On Windows**, `make` is not installed by default. Use the **Git Bash**
-> terminal that came with Git for Windows, or run the underlying npm scripts
-> directly — `npm install`, `npm run dev`, `npm run build`. The `Makefile`
-> lists what each `make` command actually runs.
+> **On Windows**, `make` is not installed by default. Every command has a plain
+> npm equivalent, and they do exactly the same thing:
+>
+> | Instead of | Run |
+> | --- | --- |
+> | `make dev` | `npm install` |
+> | `make run` | `npm run dev` |
+> | `make check` | `npm run check` |
+> | `make build` | `npm run build` |
+> | `make preview` | `npm run preview` |
+>
+> A test keeps `make check` and `npm run check` running the same set of checks,
+> so neither can quietly fall behind.
 
 ## Making it yours
 

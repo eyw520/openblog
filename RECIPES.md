@@ -211,4 +211,4 @@ Say so plainly rather than building one of these unasked:
 2. **Never write a color literal** in `app/` or `components/`. Tokens only.
 3. **Never reformat `content/`.** It belongs to the writer; Prettier is configured to leave it alone.
 4. **Never let a bad post through quietly.** Validation failures stop the build on purpose.
-5. **Run `make check` before saying anything is done.** It also prints the blog's shape — collections, layouts, fields, pages, tags — which is the quickest way to see that what you built is what you meant.
+5. **Run `make check` before saying anything is done** (`npm run check` on Windows — the two are kept in step by a test). It also prints the blog's shape — collections, layouts, fields, pages, tags — which is the quickest way to see that what you built is what you meant.
