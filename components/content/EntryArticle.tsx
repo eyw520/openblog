@@ -1,0 +1,94 @@
+import Link from "next/link";
+
+import type { ResolvedCollection } from "@/lib/config";
+import type { Entry, EntryMeta } from "@/lib/content/entry";
+import { formatDate } from "@/lib/format-date";
+
+import { Markdown } from "./Markdown";
+
+/** One post: its title block, its prose, and the way out to its neighbours. */
+export function EntryArticle({
+  entry,
+  collection,
+  locale,
+  previous,
+  next
+}: {
+  entry: Entry;
+  collection: ResolvedCollection;
+  locale: string;
+  /**
+   * Neighbours in the collection's own archive order — the entry listed just
+   * above this one, and the one just below. Deliberately not "older" and
+   * "newer": a collection sorted by title has neighbours too, and those labels
+   * would be a lie there.
+   */
+  previous?: EntryMeta;
+  next?: EntryMeta;
+}): React.ReactElement {
+  return (
+    <article>
+      <header className="border-rule max-w-measure border-b pb-8">
+        <Link
+          href={collection.route}
+          className="font-display text-ink-muted hover:text-ink text-xs uppercase tracking-label transition-colors"
+        >
+          {collection.label}
+        </Link>
+
+        <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+          {entry.title}
+        </h1>
+
+        {entry.description ? (
+          <p className="text-ink-muted mt-5 text-lg leading-relaxed">{entry.description}</p>
+        ) : null}
+
+        <p className="font-display text-ink-muted mt-6 flex flex-wrap items-baseline gap-x-3 text-xs uppercase tracking-label">
+          <time dateTime={entry.date}>{formatDate(entry.date, locale)}</time>
+          <span aria-hidden="true">·</span>
+          <span>{entry.readingMinutes} min read</span>
+          {entry.updated ? (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>Updated {formatDate(entry.updated, locale)}</span>
+            </>
+          ) : null}
+          {entry.draft ? <span className="text-rubric">· Draft</span> : null}
+        </p>
+      </header>
+
+      <Markdown content={entry.body} className="mt-12" />
+
+      {previous !== undefined || next !== undefined ? (
+        <nav aria-label="More in this collection" className="border-rule max-w-measure mt-20 border-t pt-8">
+          <ul className="flex flex-wrap justify-between gap-6">
+            {previous ? <NeighbourLink label="Previous" entry={previous} /> : <li />}
+            {next ? <NeighbourLink label="Next" entry={next} align="right" /> : null}
+          </ul>
+        </nav>
+      ) : null}
+    </article>
+  );
+}
+
+function NeighbourLink({
+  label,
+  entry,
+  align = "left"
+}: {
+  label: string;
+  entry: EntryMeta;
+  align?: "left" | "right";
+}): React.ReactElement {
+  return (
+    <li className={align === "right" ? "text-right" : undefined}>
+      <Link href={entry.href} className="group block max-w-xs">
+        <span className="font-display text-ink-muted block text-xs uppercase tracking-label">{label}</span>
+        <span className="font-display group-hover:text-accent mt-1 block font-semibold tracking-tight transition-colors">
+          {entry.title}
+        </span>
+      </Link>
+    </li>
+  );
+}
