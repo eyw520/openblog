@@ -25,20 +25,24 @@ The source site is read exactly once, into `sources/<slug>/snapshot.json`, which
 is committed. Every gate compares against that file and never touches the
 network.
 
-This is the same role designloop's seeded RNG plays. An agent iterating against
-the fidelity gate would otherwise re-fetch somebody's blog every few seconds;
-here that is impossible by construction, the loop runs in milliseconds, and two
-runs a week apart give the same verdict.
+The network is the only part of this that could answer the same question two
+different ways, so it is taken out of the loop entirely. An agent iterating
+against the fidelity gate would otherwise re-fetch somebody's blog every few
+seconds; here that is impossible by construction, the loop runs in
+milliseconds, and two runs a week apart give the same verdict.
 
 `snapshot.ts` identifies itself, honours robots.txt, and waits between requests.
 Import writing you have the right to republish — usually your own, moving house.
 
-## Why there is no pixel diff
+## Why it compares words, not appearance
 
-designloop compares a render against a reference image. That cannot work here:
-openblog deliberately imposes its own design, so a screenshot of the source and
-a screenshot of the import *should* differ. The reference is the source's
-content, and the gates measure how much of it survived.
+The obvious way to check a port is to compare the two sites side by side. That
+cannot work here: openblog deliberately imposes its own design, so a screenshot
+of the source and a screenshot of the import *should* differ, and a visual
+comparison would fail every time regardless of how good the import was.
+
+So the reference is the source's content. The gates measure how much of the
+writing survived, and say nothing about how it looks.
 
 ## The gates
 

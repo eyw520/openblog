@@ -6,19 +6,20 @@ import { fileURLToPath } from "node:url";
  * The importloop contract.
  *
  * An import job is "reproduce this existing blog inside openblog". The harness
- * never does the importing — an agent writes the Markdown, exactly as designloop
- * has the agent write render.ts — it only decides whether the result is faithful.
+ * never does the importing — an agent writes the Markdown — it only decides
+ * whether the result is faithful. A harness that produced the thing it grades
+ * could not be trusted to grade it.
  *
- * Two things differ from designloop, both forced by the task:
+ * Two decisions shape everything else here:
  *
- *   1. There is no reference image. openblog deliberately imposes its own
- *      design, so a pixel diff against the source would fail by construction.
- *      The reference is the source's *content*, and the gates measure how much
- *      of it survived.
- *   2. The nondeterminism is the network, not a random seed. So the source is
- *      snapshotted once into a committed manifest and every gate runs against
- *      that, offline. Re-running verify never touches the source site again,
- *      which makes the loop fast, reproducible, and polite.
+ *   1. The reference is the source's *content*, not its appearance. openblog
+ *      deliberately imposes its own design, so comparing screenshots would fail
+ *      by construction. The gates measure how much of the writing survived.
+ *   2. The source is read once into a committed snapshot, and every gate runs
+ *      against that, offline. The network is the only thing here that could
+ *      give two different answers to the same question, so it is taken out of
+ *      the loop entirely — which also stops an iterating agent from re-fetching
+ *      somebody's blog every few seconds.
  */
 
 export const SOURCES_DIR = join(dirname(fileURLToPath(import.meta.url)), "sources");
@@ -52,7 +53,7 @@ export interface ImportContract {
   collection: string;
   /**
    * "gates" means a clean run is done; "human" means a clean run is ready for
-   * someone to read before it is called done. Same meaning as in designloop.
+   * someone to read before it is called done.
    */
   accept: "gates" | "human";
   /**
