@@ -84,6 +84,38 @@ test("an explicit nav replaces the derived one", () => {
   assert.deepEqual(resolveConfig(config({ nav })).nav, nav);
 });
 
+test("the front page lists five entries from every collection by default", () => {
+  const resolved = resolveConfig(
+    config({
+      collections: [
+        { name: "posts", label: "Writing" },
+        { name: "notes", label: "Notes" }
+      ]
+    })
+  );
+  assert.equal(resolved.home.latest, 5);
+  assert.deepEqual(resolved.home.collections, ["posts", "notes"]);
+});
+
+test("the front-page list can be turned off or narrowed to one collection", () => {
+  const resolved = resolveConfig(
+    config({
+      collections: [
+        { name: "posts", label: "Writing" },
+        { name: "notes", label: "Notes" }
+      ],
+      home: { latest: 0, collections: ["posts"] }
+    })
+  );
+  assert.equal(resolved.home.latest, 0);
+  assert.deepEqual(resolved.home.collections, ["posts"]);
+});
+
+test("nav records whether it was written by hand, so pages know to stay out", () => {
+  assert.equal(resolveConfig(config()).navExplicit, false);
+  assert.equal(resolveConfig(config({ nav: [{ label: "About", href: "/about" }] })).navExplicit, true);
+});
+
 test("locale defaults to en", () => {
   assert.equal(resolveConfig(config()).locale, "en");
   assert.equal(resolveConfig(config({ locale: "fr" })).locale, "fr");

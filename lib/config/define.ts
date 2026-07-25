@@ -45,6 +45,17 @@ export interface CollectionConfig {
   feed?: boolean;
 }
 
+/**
+ * The front page. Its words come from content/pages/home.md; these are the
+ * knobs for what appears under them.
+ */
+export interface HomeConfig {
+  /** How many recent entries to list. 0 hides the list entirely. Defaults to 5. */
+  latest?: number;
+  /** Which collections the list draws from, by `name`. Defaults to all of them. */
+  collections?: string[];
+}
+
 export interface SiteConfig {
   /** The blog's name — the masthead, the browser tab, the feed title. */
   title: string;
@@ -61,6 +72,8 @@ export interface SiteConfig {
    */
   url: string;
   collections: CollectionConfig[];
+  /** Front-page options. Its prose lives in content/pages/home.md. */
+  home?: HomeConfig;
   /** Site navigation. Defaults to every collection with `nav` left on. */
   nav?: NavLink[];
   /** BCP 47 language tag for the <html lang> attribute. Defaults to "en". */

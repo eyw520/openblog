@@ -101,6 +101,19 @@ test("a nav href that is neither a path nor a URL is rejected", () => {
   assert.match(errors[0] ?? "", /must start with "\/"/);
 });
 
+test("a front page drawing from a collection that does not exist is caught", () => {
+  const errors = validateConfig({ ...validConfig(), home: { collections: ["notes"] } });
+  assert.equal(errors.length, 1);
+  assert.match(errors[0] ?? "", /"notes" is not a collection you declared/);
+  assert.match(errors[0] ?? "", /Available: posts/);
+});
+
+test("a fractional or negative post count is rejected", () => {
+  assert.equal(validateConfig({ ...validConfig(), home: { latest: 2.5 } }).length, 1);
+  assert.equal(validateConfig({ ...validConfig(), home: { latest: -1 } }).length, 1);
+  assert.deepEqual(validateConfig({ ...validConfig(), home: { latest: 0 } }), []);
+});
+
 test("declaring no collections at all is rejected", () => {
   const errors = validateConfig({ ...validConfig(), collections: [] });
   assert.equal(errors.length, 1);

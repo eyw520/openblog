@@ -1,9 +1,8 @@
-import Link from "next/link";
-
 import type { ResolvedCollection } from "@/lib/config";
 import type { EntryMeta } from "@/lib/content/entry";
 import { groupByYear } from "@/lib/content/sort";
-import { formatDateShort } from "@/lib/format-date";
+
+import { EntryRow } from "./EntryRow";
 
 /**
  * A collection's archive.
@@ -63,28 +62,3 @@ export function CollectionIndex({
   );
 }
 
-function EntryRow({ entry, locale }: { entry: EntryMeta; locale: string }): React.ReactElement {
-  return (
-    <article>
-      <Link href={entry.href} className="group block">
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <time
-            dateTime={entry.date}
-            className="font-display text-ink-muted w-16 shrink-0 text-xs uppercase tracking-label"
-          >
-            {formatDateShort(entry.date, locale)}
-          </time>
-          <h3 className="font-display group-hover:text-accent text-lg font-semibold tracking-tight transition-colors">
-            {entry.title}
-          </h3>
-          {entry.draft ? (
-            <span className="text-rubric font-display text-xs uppercase tracking-label">Draft</span>
-          ) : null}
-        </div>
-        {entry.description ? (
-          <p className="text-ink-muted max-w-measure mt-2 leading-relaxed md:pl-20">{entry.description}</p>
-        ) : null}
-      </Link>
-    </article>
-  );
-}

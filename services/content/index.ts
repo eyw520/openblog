@@ -7,9 +7,11 @@ import "server-only";
  */
 export {
   getEntry,
+  getHomePage,
   getPage,
   listAllEntries,
   listEntries,
+  listLatestEntries,
   listNavLinks,
   listPageSlugs,
   listPages,

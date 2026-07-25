@@ -11,6 +11,12 @@ export interface ResolvedCollection {
   feed: boolean;
 }
 
+export interface ResolvedHome {
+  latest: number;
+  /** Collection names, already checked against what is declared. */
+  collections: string[];
+}
+
 /** The site config the rest of the codebase reads: no optionals, no guessing. */
 export interface ResolvedSite {
   title: string;
@@ -28,6 +34,7 @@ export interface ResolvedSite {
    */
   basePath: string;
   collections: ResolvedCollection[];
+  home: ResolvedHome;
   nav: NavLink[];
   /**
    * True when site.config.ts listed `nav` by hand. The navigation builder uses
@@ -55,6 +62,10 @@ export function resolveConfig(config: SiteConfig): ResolvedSite {
     origin,
     basePath,
     collections,
+    home: {
+      latest: config.home?.latest ?? 5,
+      collections: config.home?.collections ?? collections.map((collection) => collection.name)
+    },
     nav: config.nav ?? defaultNav(collections),
     navExplicit: config.nav !== undefined
   };

@@ -31,6 +31,13 @@ export type { Entry, EntryMeta, Page, PageMeta };
 const PAGES_DIR = path.join(CONTENT_DIR, "pages");
 
 /**
+ * content/pages/home.md is reserved: it supplies the words on the front page
+ * and is deliberately not published at /home as well. Two addresses for one
+ * piece of writing is a bug, not a feature.
+ */
+const HOME_SLUG = "home";
+
+/**
  * Every standalone page, in navigation order. Pages are discovered from
  * content/pages/ rather than declared, so creating one is a single file.
  */
@@ -42,7 +49,7 @@ export function listPages(): PageMeta[] {
   const errors: string[] = [];
   const pages: PageMeta[] = [];
 
-  for (const slug of markdownSlugs(PAGES_DIR)) {
+  for (const slug of markdownSlugs(PAGES_DIR).filter((slug) => slug !== HOME_SLUG)) {
     const result = readPage(slug);
     if (!result.ok) {
       errors.push(...result.errors);
@@ -65,6 +72,26 @@ export function getPage(slug: string): Page | null {
     throw new Error(["This page needs attention:", "", ...result.errors.map((e) => `  • ${e}`), ""].join("\n"));
   }
   return result.page;
+}
+
+/**
+ * The front page's own words, or null when content/pages/home.md is absent —
+ * in which case the front page falls back to the site title and description.
+ */
+export function getHomePage(): Page | null {
+  return getPage(HOME_SLUG);
+}
+
+/**
+ * The most recent entries across the collections the front page draws from,
+ * newest first, capped by `home.latest`.
+ */
+export function listLatestEntries(): EntryMeta[] {
+  if (site.home.latest === 0) {
+    return [];
+  }
+  const entries = site.home.collections.flatMap((name) => listEntries(name));
+  return sortEntries(entries, "date-desc").slice(0, site.home.latest);
 }
 
 /** The slugs the catch-all route should generate a page for. */

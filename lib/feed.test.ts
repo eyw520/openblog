@@ -15,6 +15,7 @@ const site: ResolvedSite = {
   origin: "https://ada.github.io",
   basePath: "/notes",
   collections: [],
+  home: { latest: 5, collections: [] },
   nav: [],
   navExplicit: false
 };

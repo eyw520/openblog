@@ -29,6 +29,7 @@ export function validateConfig(config: SiteConfig): string[] {
 
   validateUrl(config.url, field);
   validateCollections(config.collections, field);
+  validateHome(config, field);
 
   config.nav?.forEach((link, index) => {
     const at = `nav[${index}]`;
@@ -49,6 +50,30 @@ export function validateConfig(config: SiteConfig): string[] {
 }
 
 type FieldReporter = (name: string, problem: string) => void;
+
+function validateHome(config: SiteConfig, field: FieldReporter): void {
+  const home = config.home;
+  if (!home) {
+    return;
+  }
+
+  if (home.latest !== undefined && (!Number.isInteger(home.latest) || home.latest < 0)) {
+    field(
+      "home.latest",
+      `must be a whole number of posts to show, or 0 for none — got ${String(home.latest)}.`
+    );
+  }
+
+  const declared = new Set(config.collections.map((collection) => collection.name));
+  home.collections?.forEach((name, index) => {
+    if (!declared.has(name)) {
+      field(
+        `home.collections[${index}]`,
+        `"${name}" is not a collection you declared. Available: ${[...declared].join(", ") || "none"}.`
+      );
+    }
+  });
+}
 
 function validateUrl(url: string, field: FieldReporter): void {
   if (!isNonEmpty(url)) {
