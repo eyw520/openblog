@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { site } from "../lib/config";
-import { listEntries } from "../lib/content/read";
+import { listEntries, listPages } from "../lib/content/read";
 
 /**
  * The content gate.
@@ -36,6 +36,29 @@ function main(): void {
       knownPaths.add(normalize(entry.href));
       entryCount += 1;
     }
+  }
+
+  // A page whose slug matches a collection route would never be served: the
+  // resolver checks collections first. Reporting it beats a page that silently
+  // shows the wrong thing.
+  const collectionRoutes = new Set(site.collections.map((collection) => normalize(collection.route)));
+  const pages = listPages();
+  const shadowed = pages.filter((page) => collectionRoutes.has(normalize(page.href)));
+
+  if (shadowed.length > 0) {
+    console.error("\nSome pages cannot be reached:\n");
+    for (const page of shadowed) {
+      console.error(
+        `  • content/pages/${page.slug}.md would be published at ${page.href}, ` +
+          `but a collection in site.config.ts already uses that address.`
+      );
+    }
+    console.error("\nRename the page's file, or change that collection's `route`.\n");
+    process.exit(1);
+  }
+
+  for (const page of pages) {
+    knownPaths.add(normalize(page.href));
   }
 
   const problems: string[] = [];
@@ -75,7 +98,8 @@ function main(): void {
 
   console.log(
     `Content is in order: ${site.collections.length} collection(s), ` +
-      `${entryCount} entr${entryCount === 1 ? "y" : "ies"}, ${linkCount} internal link(s) checked.`
+      `${entryCount} entr${entryCount === 1 ? "y" : "ies"}, ${pages.length} page(s), ` +
+      `${linkCount} internal link(s) checked.`
   );
 }
 

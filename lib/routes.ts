@@ -10,18 +10,24 @@ import type { ResolvedCollection } from "@/lib/config";
 
 export type RouteTarget =
   | { kind: "index"; collection: ResolvedCollection }
-  | { kind: "entry"; collection: ResolvedCollection; slug: string };
+  | { kind: "entry"; collection: ResolvedCollection; slug: string }
+  | { kind: "page"; slug: string };
 
 /**
- * Resolves URL segments to a collection index or one of its entries, or null
- * when nothing matches and the page should 404.
+ * Resolves URL segments to a collection index, one of its entries, or a
+ * standalone page — or null when nothing matches and the request should 404.
  *
  * Longer routes are tried first so a collection at "/notes/daily" wins over one
  * at "/notes" — otherwise the shorter route would claim the path and treat
  * "daily" as an entry slug.
+ *
+ * Collections are matched before pages. A page whose slug collides with a
+ * collection route would otherwise be unreachable in a way nothing announced;
+ * the content gate reports that collision as an error instead.
  */
 export function resolveRoute(
   collections: readonly ResolvedCollection[],
+  pageSlugs: readonly string[],
   segments: readonly string[]
 ): RouteTarget | null {
   const path = `/${segments.join("/")}`;
@@ -40,6 +46,12 @@ export function resolveRoute(
         return { kind: "entry", collection, slug };
       }
     }
+  }
+
+  // Pages live at the root: content/pages/about.md is served at /about.
+  const [first] = segments;
+  if (segments.length === 1 && first !== undefined && pageSlugs.includes(first)) {
+    return { kind: "page", slug: first };
   }
 
   return null;

@@ -29,6 +29,12 @@ export interface ResolvedSite {
   basePath: string;
   collections: ResolvedCollection[];
   nav: NavLink[];
+  /**
+   * True when site.config.ts listed `nav` by hand. The navigation builder uses
+   * it to decide whether pages may append themselves: an owner who wrote the
+   * menu out asked for exactly that menu, and a new file should not edit it.
+   */
+  navExplicit: boolean;
 }
 
 /**
@@ -49,7 +55,8 @@ export function resolveConfig(config: SiteConfig): ResolvedSite {
     origin,
     basePath,
     collections,
-    nav: config.nav ?? defaultNav(collections)
+    nav: config.nav ?? defaultNav(collections),
+    navExplicit: config.nav !== undefined
   };
 }
 

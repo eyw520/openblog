@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { CollectionIndex, EntryArticle } from "@/components/content";
+import { CollectionIndex, EntryArticle, PageArticle } from "@/components/content";
 import { PageLayout } from "@/components/layout";
 import { site } from "@/lib/config";
 import { entrySegments, indexSegments, resolveRoute } from "@/lib/routes";
-import { getEntry, listEntries } from "@/services/content";
+import { getEntry, getPage, listEntries, listPageSlugs, listPages } from "@/services/content";
 
 /**
- * EVERY collection page on the site — both archives and posts — is rendered
- * here. This is the file that makes "declare a collection in site.config.ts"
- * sufficient to publish one: there is no per-collection route to write, and
- * adding one would be the wrong fix for almost any problem.
+ * EVERY content page on the site — collection archives, posts, and standalone
+ * pages — is rendered here. This is the file that makes "declare a collection
+ * in site.config.ts" or "drop a file in content/pages/" sufficient to publish:
+ * there is no per-collection or per-page route to write, and adding one would
+ * be the wrong fix for almost any problem.
  *
  * `lib/routes` decides what a path means; this file only fetches and renders.
  */
@@ -20,15 +21,18 @@ type RouteParams = { slug: string[] };
 
 /** The complete list of pages to export. Anything absent here is not built. */
 export function generateStaticParams(): RouteParams[] {
-  return site.collections.flatMap((collection) => [
-    { slug: indexSegments(collection) },
-    ...listEntries(collection.name).map((entry) => ({ slug: entrySegments(collection, entry.slug) }))
-  ]);
+  return [
+    ...site.collections.flatMap((collection) => [
+      { slug: indexSegments(collection) },
+      ...listEntries(collection.name).map((entry) => ({ slug: entrySegments(collection, entry.slug) }))
+    ]),
+    ...listPages().map((page) => ({ slug: [page.slug] }))
+  ];
 }
 
 export async function generateMetadata({ params }: { params: Promise<RouteParams> }): Promise<Metadata> {
   const { slug } = await params;
-  const target = resolveRoute(site.collections, slug);
+  const target = resolveRoute(site.collections, listPageSlugs(), slug);
   if (!target) {
     return {};
   }
@@ -38,6 +42,11 @@ export async function generateMetadata({ params }: { params: Promise<RouteParams
       title: target.collection.label,
       description: target.collection.description || site.description
     };
+  }
+
+  if (target.kind === "page") {
+    const page = getPage(target.slug);
+    return page ? { title: page.title, description: page.description || site.description } : {};
   }
 
   const entry = getEntry(target.collection.name, target.slug);
@@ -65,10 +74,22 @@ export default async function CollectionPage({
   params: Promise<RouteParams>;
 }): Promise<React.ReactElement> {
   const { slug } = await params;
-  const target = resolveRoute(site.collections, slug);
+  const target = resolveRoute(site.collections, listPageSlugs(), slug);
 
   if (!target) {
     notFound();
+  }
+
+  if (target.kind === "page") {
+    const page = getPage(target.slug);
+    if (!page) {
+      notFound();
+    }
+    return (
+      <PageLayout>
+        <PageArticle page={page} />
+      </PageLayout>
+    );
   }
 
   if (target.kind === "index") {

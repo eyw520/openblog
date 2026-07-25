@@ -15,7 +15,8 @@ const site: ResolvedSite = {
   origin: "https://ada.github.io",
   basePath: "/notes",
   collections: [],
-  nav: []
+  nav: [],
+  navExplicit: false
 };
 
 function entry(overrides: Partial<EntryMeta> = {}): EntryMeta {

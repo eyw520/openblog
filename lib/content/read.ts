@@ -6,6 +6,7 @@ import matter from "gray-matter";
 import { findCollection, site } from "@/lib/config";
 
 import { parseEntry, type Entry, type EntryMeta } from "./entry";
+import { parsePage, sortPagesForNav, type Page, type PageMeta } from "./page";
 import { sortEntries } from "./sort";
 
 /**
@@ -25,7 +26,82 @@ const CONTENT_DIR = path.join(process.cwd(), "content");
 /** Drafts are visible while writing and disappear from a production build. */
 const includeDrafts = process.env.NODE_ENV === "development";
 
-export type { Entry, EntryMeta };
+export type { Entry, EntryMeta, Page, PageMeta };
+
+const PAGES_DIR = path.join(CONTENT_DIR, "pages");
+
+/**
+ * Every standalone page, in navigation order. Pages are discovered from
+ * content/pages/ rather than declared, so creating one is a single file.
+ */
+export function listPages(): PageMeta[] {
+  if (!fs.existsSync(PAGES_DIR)) {
+    return [];
+  }
+
+  const errors: string[] = [];
+  const pages: PageMeta[] = [];
+
+  for (const slug of markdownSlugs(PAGES_DIR)) {
+    const result = readPage(slug);
+    if (!result.ok) {
+      errors.push(...result.errors);
+    } else if (result.page) {
+      pages.push(result.page);
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(["Some pages need attention:", "", ...errors.map((e) => `  • ${e}`), ""].join("\n"));
+  }
+
+  return sortPagesForNav(pages);
+}
+
+/** One page with its Markdown body, or null when there is no such file. */
+export function getPage(slug: string): Page | null {
+  const result = readPage(slug);
+  if (!result.ok) {
+    throw new Error(["This page needs attention:", "", ...result.errors.map((e) => `  • ${e}`), ""].join("\n"));
+  }
+  return result.page;
+}
+
+/** The slugs the catch-all route should generate a page for. */
+export function listPageSlugs(): string[] {
+  return listPages().map((page) => page.slug);
+}
+
+/**
+ * The site navigation.
+ *
+ * An explicit `nav` in site.config.ts is taken verbatim — the owner has asked
+ * for full control. Otherwise it is derived: collections in declared order,
+ * then any page whose frontmatter opts in. That is what makes adding an about
+ * page to the menu a one-line edit in the page itself.
+ */
+export function listNavLinks(): { label: string; href: string }[] {
+  if (site.navExplicit) {
+    return site.nav;
+  }
+  return [...site.nav, ...listPages().filter((page) => page.nav).map((page) => ({
+    label: page.navLabel,
+    href: page.href
+  }))];
+}
+
+type ReadPageResult = { ok: true; page: Page | null } | { ok: false; errors: string[] };
+
+function readPage(slug: string): ReadPageResult {
+  const file = path.join(PAGES_DIR, `${slug}.md`);
+  if (!fs.existsSync(file)) {
+    return { ok: true, page: null };
+  }
+
+  const { data, content } = matter(fs.readFileSync(file, "utf-8"));
+  const parsed = parsePage({ slug, data, body: content.trim() });
+  return parsed.ok ? { ok: true, page: parsed.page } : { ok: false, errors: parsed.errors };
+}
 
 /**
  * Every entry in a collection, ordered per its `sort` setting.

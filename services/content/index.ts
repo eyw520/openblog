@@ -5,5 +5,14 @@ import "server-only";
  * turns an accidental import from a client component into a build error rather
  * than a bundle that tries to read the filesystem in a browser.
  */
-export { getEntry, listAllEntries, listEntries, listSlugs } from "@/lib/content/read";
-export type { Entry, EntryMeta } from "@/lib/content/read";
+export {
+  getEntry,
+  getPage,
+  listAllEntries,
+  listEntries,
+  listNavLinks,
+  listPageSlugs,
+  listPages,
+  listSlugs
+} from "@/lib/content/read";
+export type { Entry, EntryMeta, Page, PageMeta } from "@/lib/content/read";
