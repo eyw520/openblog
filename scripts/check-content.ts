@@ -54,13 +54,11 @@ async function main(): Promise<void> {
   // That import has now validated site.config.ts, and listEntries validates
   // every post's frontmatter. Both throw with their own guidance.
   const knownPaths = new Set<string>(["/"]);
-  let entryCount = 0;
 
   for (const collection of site.collections) {
     knownPaths.add(normalize(collection.route));
     for (const entry of listEntries(collection.name)) {
       knownPaths.add(normalize(entry.href));
-      entryCount += 1;
     }
   }
 
@@ -124,11 +122,39 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(
-    `Content is in order: ${site.collections.length} collection(s), ` +
-      `${entryCount} entr${entryCount === 1 ? "y" : "ies"}, ${pages.length} page(s), ` +
-      `${linkCount} internal link(s) checked.`
-  );
+  // A report rather than a tick: whoever ran this — a person or an agent — can
+  // see the shape of the blog they have actually built, which is the quickest
+  // way to notice a collection pointing at an empty folder or the wrong layout.
+  console.log(`\nContent is in order. ${linkCount} internal link(s) checked.\n`);
+
+  for (const collection of site.collections) {
+    const count = listEntries(collection.name).length;
+    const notes = [
+      `${count} ${count === 1 ? "entry" : "entries"}`,
+      `${collection.layout} layout`,
+      `${collection.indexLayout} archive`,
+      ...(Object.keys(collection.fields).length > 0
+        ? [`fields: ${Object.keys(collection.fields).join(", ")}`]
+        : []),
+      ...(collection.toc ? ["contents list"] : []),
+      ...(collection.feed ? [] : ["not in feed"])
+    ];
+    console.log(`  ${collection.route.padEnd(14)} ${collection.label} — ${notes.join(", ")}`);
+  }
+
+  for (const page of pages) {
+    console.log(`  ${page.href.padEnd(14)} ${page.title}${page.nav ? " — in the menu" : ""}`);
+  }
+
+  const tagCount = new Set(
+    site.collections.flatMap((collection) =>
+      listEntries(collection.name).flatMap((entry) => entry.tags.map((tag) => tag.toLowerCase()))
+    )
+  ).size;
+  if (tagCount > 0) {
+    console.log(`  ${site.tags.route.padEnd(14)} ${site.tags.label} — ${tagCount} in use`);
+  }
+  console.log("");
 }
 
 /**
