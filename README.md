@@ -4,16 +4,38 @@ A blog you own, written in Markdown, published to the web for free.
 
 You write posts as plain text files. openblog turns them into a fast, static website and publishes it to GitHub Pages every time you save your work. There is no database, no hosting bill, no admin panel, and nothing running on a server that can break at three in the morning.
 
-## What you need
+## Starting from nothing
 
-- A [GitHub](https://github.com) account.
-- [Node.js 20 or newer](https://nodejs.org).
-- A text editor, or a coding assistant that can edit files for you.
+You need three things, all free. If you have a coding assistant, hand it this
+section and it will do most of the typing.
 
-## Getting started
+**1. A GitHub account.** Sign up at [github.com](https://github.com). This is
+where your writing lives and where the site is published from — you do not need
+to know how to use it beyond this page.
+
+**2. Your own copy of openblog.** On the openblog repository, press
+**Use this template → Create a new repository**. Do not press Fork; a template
+gives you a clean copy that is yours.
+
+The name you give that repository decides your blog's web address:
+
+| Repository name | Your blog lives at |
+| --- | --- |
+| `blog` | `https://<your-username>.github.io/blog` |
+| `<your-username>.github.io` | `https://<your-username>.github.io` |
+
+The second is the tidier address, and you get one per account. Either is fine,
+but pick now — changing it later means changing one line and republishing.
+
+**3. The tools to run it.** You need [Node.js 20 or newer](https://nodejs.org)
+and Git. On a Mac, Git arrives with the Xcode command line tools
+(`xcode-select --install`); on Windows, install
+[Git for Windows](https://git-scm.com/download/win).
+
+## Getting it onto your machine
 
 ```bash
-git clone https://github.com/<username>/openblog.git my-blog
+git clone https://github.com/<your-username>/<your-repository>.git my-blog
 cd my-blog
 make dev     # installs everything, once
 make run     # opens the blog at http://localhost:3000
@@ -21,11 +43,21 @@ make run     # opens the blog at http://localhost:3000
 
 Leave `make run` going while you write — the site reloads as you save.
 
+> **On Windows**, `make` is not installed by default. Use the **Git Bash**
+> terminal that came with Git for Windows, or run the underlying npm scripts
+> directly — `npm install`, `npm run dev`, `npm run build`. The `Makefile`
+> lists what each `make` command actually runs.
+
 ## Making it yours
 
-Open `site.config.ts`. It holds your blog's name, your name, its description, and the address it will live at. Change those four things and the whole site follows.
+Open `site.config.ts`. It holds your blog's name, your name, its description,
+and the address it will live at. Change those four things and the whole site
+follows.
 
-The `url` matters more than it looks. It must be the full address your blog will have once published — for GitHub Pages that is `https://<username>.github.io/<repository>`, or just `https://yourdomain.com` if you have your own domain. Everything else, including the way stylesheets are linked, is worked out from it.
+The `url` must be the address from the table above — the one your repository
+name gave you. Get it wrong and the published site loads without any styling,
+so `make deploy` checks it against your repository before publishing anything
+and tells you the exact line to write if it does not match.
 
 ## Writing
 
@@ -47,15 +79,23 @@ The filename becomes the address, so `content/posts/a-morning-walk.md` is publis
 
 ## Publishing
 
-Once, in your repository's **Settings → Pages**, set **Source** to **GitHub Actions**.
+Once, and only once: in your repository on github.com, go to
+**Settings → Pages** and set **Source** to **GitHub Actions**. Nothing else
+there needs touching.
 
-After that:
+Then, whenever you want the world to see your writing:
 
 ```bash
 make deploy
 ```
 
-It checks your blog for problems, builds it, and pushes. GitHub publishes it a minute or so later. If anything is wrong — a mistyped date, a link to a page that does not exist — it stops and tells you which file and which line, before anything reaches the web.
+That checks the address is right, checks the writing for problems, builds the
+site, and pushes it. GitHub publishes a minute or two later; you can watch it
+finish under the **Actions** tab of your repository.
+
+If anything is wrong — a mistyped date, a link to a page that does not exist, an
+address that does not match your repository — it stops and names the file and
+the line, before anything reaches the web.
 
 ## Commands
 
