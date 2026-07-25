@@ -16,6 +16,8 @@ const site: ResolvedSite = {
   basePath: "/notes",
   collections: [],
   home: { latest: 5, collections: [] },
+  social: [],
+  display: { readingTime: true, copyright: "" },
   nav: [],
   navExplicit: false
 };

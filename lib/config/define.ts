@@ -45,6 +45,22 @@ export interface CollectionConfig {
   feed?: boolean;
 }
 
+/** A way to reach you, shown in the footer. */
+export interface SocialLink {
+  /** The visible text, e.g. "Email", "GitHub", "Mastodon". */
+  label: string;
+  /** A full URL, a "mailto:" address, or a path on this blog. */
+  href: string;
+}
+
+/** Small presentation choices that do not warrant editing a component. */
+export interface DisplayConfig {
+  /** Show "N min read" on a post. Defaults to true. */
+  readingTime?: boolean;
+  /** A line at the foot of every page, e.g. "© 2026 Ada Lovelace". */
+  copyright?: string;
+}
+
 /**
  * The front page. Its words come from content/pages/home.md; these are the
  * knobs for what appears under them.
@@ -74,6 +90,10 @@ export interface SiteConfig {
   collections: CollectionConfig[];
   /** Front-page options. Its prose lives in content/pages/home.md. */
   home?: HomeConfig;
+  /** Ways to reach you, listed in the footer. */
+  social?: SocialLink[];
+  /** Presentation choices that would otherwise mean editing a component. */
+  display?: DisplayConfig;
   /** Site navigation. Defaults to every collection with `nav` left on. */
   nav?: NavLink[];
   /** BCP 47 language tag for the <html lang> attribute. Defaults to "en". */

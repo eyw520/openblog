@@ -1,4 +1,4 @@
-import type { Author, CollectionConfig, NavLink, SiteConfig, SortOrder } from "./define";
+import type { Author, CollectionConfig, NavLink, SiteConfig, SocialLink, SortOrder } from "./define";
 
 /** A collection with every optional field filled in. */
 export interface ResolvedCollection {
@@ -9,6 +9,11 @@ export interface ResolvedCollection {
   sort: SortOrder;
   nav: boolean;
   feed: boolean;
+}
+
+export interface ResolvedDisplay {
+  readingTime: boolean;
+  copyright: string;
 }
 
 export interface ResolvedHome {
@@ -35,6 +40,8 @@ export interface ResolvedSite {
   basePath: string;
   collections: ResolvedCollection[];
   home: ResolvedHome;
+  social: SocialLink[];
+  display: ResolvedDisplay;
   nav: NavLink[];
   /**
    * True when site.config.ts listed `nav` by hand. The navigation builder uses
@@ -65,6 +72,11 @@ export function resolveConfig(config: SiteConfig): ResolvedSite {
     home: {
       latest: config.home?.latest ?? 5,
       collections: config.home?.collections ?? collections.map((collection) => collection.name)
+    },
+    social: config.social ?? [],
+    display: {
+      readingTime: config.display?.readingTime ?? true,
+      copyright: config.display?.copyright ?? ""
     },
     nav: config.nav ?? defaultNav(collections),
     navExplicit: config.nav !== undefined

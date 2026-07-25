@@ -31,6 +31,21 @@ export function validateConfig(config: SiteConfig): string[] {
   validateCollections(config.collections, field);
   validateHome(config, field);
 
+  config.social?.forEach((link, index) => {
+    const at = `social[${index}]`;
+    if (!isNonEmpty(link.label)) {
+      field(`${at}.label`, 'must be the visible text, for example label: "Email".');
+    }
+    if (!isNonEmpty(link.href)) {
+      field(`${at}.href`, 'must be where the link goes, for example href: "mailto:you@example.com".');
+    } else if (!isAbsoluteUrl(link.href) && !link.href.startsWith("mailto:") && !link.href.startsWith("/")) {
+      field(
+        `${at}.href`,
+        `"${link.href}" must start with "https://", "mailto:", or "/" — otherwise the link will not work.`
+      );
+    }
+  });
+
   config.nav?.forEach((link, index) => {
     const at = `nav[${index}]`;
     if (!isNonEmpty(link.label)) {

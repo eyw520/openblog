@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { ResolvedCollection } from "@/lib/config";
+import { site, type ResolvedCollection } from "@/lib/config";
 import type { Entry, EntryMeta } from "@/lib/content/entry";
 import { formatDate } from "@/lib/format-date";
 
@@ -46,8 +46,12 @@ export function EntryArticle({
 
         <p className="font-display text-ink-muted mt-6 flex flex-wrap items-baseline gap-x-3 text-xs uppercase tracking-label">
           <time dateTime={entry.date}>{formatDate(entry.date, locale)}</time>
-          <span aria-hidden="true">·</span>
-          <span>{entry.readingMinutes} min read</span>
+          {site.display.readingTime ? (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{entry.readingMinutes} min read</span>
+            </>
+          ) : null}
           {entry.updated ? (
             <>
               <span aria-hidden="true">·</span>

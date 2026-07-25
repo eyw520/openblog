@@ -120,3 +120,14 @@ test("locale defaults to en", () => {
   assert.equal(resolveConfig(config()).locale, "en");
   assert.equal(resolveConfig(config({ locale: "fr" })).locale, "fr");
 });
+
+test("display options default to showing reading time and no copyright line", () => {
+  const resolved = resolveConfig(config());
+  assert.equal(resolved.display.readingTime, true);
+  assert.equal(resolved.display.copyright, "");
+  assert.deepEqual(resolved.social, []);
+});
+
+test("reading time can be turned off", () => {
+  assert.equal(resolveConfig(config({ display: { readingTime: false } })).display.readingTime, false);
+});

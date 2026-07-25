@@ -119,3 +119,21 @@ test("declaring no collections at all is rejected", () => {
   assert.equal(errors.length, 1);
   assert.match(errors[0] ?? "", /at least one kind of writing/);
 });
+
+test("a social link with no scheme is rejected before it ships as a dead link", () => {
+  const errors = validateConfig({ ...validConfig(), social: [{ label: "Email", href: "you@example.com" }] });
+  assert.equal(errors.length, 1);
+  assert.match(errors[0] ?? "", /must start with "https:\/\/", "mailto:", or "\/"/);
+});
+
+test("mailto, https, and internal social links are all accepted", () => {
+  const errors = validateConfig({
+    ...validConfig(),
+    social: [
+      { label: "Email", href: "mailto:you@example.com" },
+      { label: "GitHub", href: "https://github.com/you" },
+      { label: "Now", href: "/now" }
+    ]
+  });
+  assert.deepEqual(errors, []);
+});
