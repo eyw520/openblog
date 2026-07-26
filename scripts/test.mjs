@@ -3,8 +3,12 @@ import fs from "node:fs";
 import path from "node:path";
 
 // Runs every *.test.ts in the repo through node's built-in test runner, with tsx
-// stripping the types. Node 20's --test cannot glob, so the files are collected
-// here; a repo with no tests yet exits 0 rather than failing the gate.
+// stripping the types.
+//
+// The files are collected here rather than left to --test's own globbing: this
+// controls exactly what is excluded (node_modules, build output), keeps the
+// order stable so a failure is always reported in the same place, and lets a
+// repo with no tests yet exit 0 instead of failing the gate.
 
 const IGNORED = new Set(["node_modules", ".next", ".next-dev", "out", ".git"]);
 

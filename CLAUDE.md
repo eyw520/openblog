@@ -24,7 +24,7 @@ make build     # static export to out/
 make deploy    # check, build, push (GitHub Actions publishes)
 ```
 
-Node 20 (`.nvmrc`).
+Node 22 (`.nvmrc`). CI reads that file, so the pin is the single source of truth.
 
 ## Layout
 

@@ -38,7 +38,7 @@ fmt:
 
 # Wire the repo's git hooks (also run by npm's `prepare` on install).
 hooks:
-	git config core.hooksPath .githooks
+	npm run hooks
 
 # One-shot setup for a fresh clone: dependencies plus the git hooks.
 dev: hooks

@@ -6,7 +6,7 @@
   "author": "eyw520",
   "license": "MIT",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "next dev",
@@ -29,7 +29,8 @@
     "format:check": "prettier --check --cache .",
     "spellcheck": "cspell --no-progress --no-must-find-files --cache \"content/**/*.md\"",
     "test": "node scripts/test.mjs",
-    "prepare": "git config core.hooksPath .githooks"
+    "prepare": "node scripts/wire-hooks.mjs",
+    "hooks": "node scripts/wire-hooks.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

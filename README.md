@@ -27,7 +27,7 @@ The name you give that repository decides your blog's web address:
 The second is the tidier address, and you get one per account. Either is fine,
 but pick now — changing it later means changing one line and republishing.
 
-**3. The tools to run it.** You need [Node.js 20 or newer](https://nodejs.org)
+**3. The tools to run it.** You need [Node.js 22 or newer](https://nodejs.org)
 and Git. On a Mac, Git arrives with the Xcode command line tools
 (`xcode-select --install`); on Windows, install
 [Git for Windows](https://git-scm.com/download/win).
