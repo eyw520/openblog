@@ -1,11 +1,12 @@
 # Engineering Conventions
 
-Shared conventions; each repo's CLAUDE.md adds its map, invariants, and gotchas.
+Shared conventions first; the repo's own map, invariants, and gotchas follow below (CLAUDE.md stays a thin pointer here).
 When this file and an enforcing hook disagree, the hook wins — fix whichever is wrong in the same commit.
 
 ## First principles
 
-1. Comments and docstrings earn their place: write them only when they add what the code cannot say — the why, a non-obvious constraint — and keep them concise, dense, and evergreen.
+1. Code self-describes through naming and structure; a comment or docstring earns its place only when it adds what the code cannot say — the why, a non-obvious constraint — and then it is one line, dense, and evergreen.
+   Never narrate what the code does, the change you made, or its correctness; a comment that restates the code means delete the comment or rename the code.
 2. Never use emojis in generated code.
 3. Do not generate markdown files unless instructed to do so.
 4. Prose in Markdown is one sentence per line — never hard-wrap.
@@ -25,7 +26,7 @@ When this file and an enforcing hook disagree, the hook wins — fix whichever i
 
 - Format: `<type>(<scope>): Sentence case ending with period.` — subject only, no trailers.
   Some repos drop the scope; `.githooks/commit-msg` is the source of truth for exact types and scopes.
-- Base types: feat, fix, chore, clean, revert. Repos may extend.
+- Base types: feat, fix, docs, chore, clean, revert. Repos may extend.
 - Backtick code identifiers and filenames in the subject.
 - One logical change per commit (one fix, one feature, one phase); a snapshot or doc truth-keeping edit rides the commit that caused it.
 - For a bug fix, land the failing test with the fix.
